@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>d3c4 — Structurizr Diagram Renderer</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: #f5f5f5;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        background: #1a1a2e;
+        color: #fff;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+      header span { color: #888; font-size: 13px; }
+      .main {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
+      .sidebar {
+        width: 380px;
+        min-width: 280px;
+        background: #fff;
+        border-right: 1px solid #e0e0e0;
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+        gap: 12px;
+        overflow: hidden;
+      }
+      label { font-size: 12px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+      textarea {
+        flex: 1;
+        min-height: 0;
+        font-family: 'SF Mono', 'Fira Code', monospace;
+        font-size: 12px;
+        line-height: 1.5;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 10px;
+        resize: none;
+        outline: none;
+        color: #222;
+        background: #fafafa;
+      }
+      textarea:focus { border-color: #4a90e2; background: #fff; }
+      .controls { display: flex; gap: 8px; align-items: center; }
+      select {
+        flex: 1;
+        padding: 7px 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 13px;
+        background: #fff;
+        outline: none;
+        cursor: pointer;
+      }
+      button {
+        padding: 7px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      button.primary { background: #1168bd; color: #fff; }
+      button.primary:hover { background: #0d57a0; }
+      button.secondary { background: #f0f0f0; color: #333; }
+      button.secondary:hover { background: #e0e0e0; }
+      #error {
+        display: none;
+        background: #fef2f2;
+        border: 1px solid #fca5a5;
+        color: #b91c1c;
+        padding: 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .diagram-area {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+      }
+      #diagram {
+        width: 100%;
+        height: 100%;
+      }
+      .toolbar {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        display: flex;
+        gap: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>d3c4</h1>
+      <span>Structurizr DSL → C4 Diagram Renderer</span>
+    </header>
+    <div class="main">
+      <div class="sidebar">
+        <label for="dsl-input">Structurizr DSL</label>
+        <textarea id="dsl-input" spellcheck="false" placeholder="workspace { ... }"></textarea>
+        <div id="error"></div>
+        <div class="controls">
+          <select id="view-select"></select>
+          <button id="render-btn" class="primary">Render</button>
+        </div>
+      </div>
+      <div class="diagram-area">
+        <div id="diagram"></div>
+        <div class="toolbar">
+          <button id="fit-btn" class="secondary">Fit</button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
