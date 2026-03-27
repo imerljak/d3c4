@@ -1,5 +1,12 @@
 # @d3c4/react
 
+## 0.1.3
+
+### Patch Changes
+
+- @d3c4/types@0.1.3
+- @d3c4/core@0.1.3
+
 ## 0.1.2
 
 ### Patch Changes
