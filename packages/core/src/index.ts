@@ -1,6 +1,8 @@
 // Primary public API
 export { Renderer } from './renderer/Renderer.js';
 export type { RendererOptions } from './renderer/Renderer.js';
+export { ForceRenderer } from './renderer/ForceRenderer.js';
+export type { ForceRendererOptions } from './renderer/ForceRenderer.js';
 
 // Advanced / composable use
 export { WorkspaceParser } from './parser/WorkspaceParser.js';

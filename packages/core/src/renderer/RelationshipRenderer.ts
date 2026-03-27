@@ -126,7 +126,7 @@ export class RelationshipRenderer {
  * Returns the dy offset to use for the next text block below.
  */
 function wrapLabelText(
-  parent: d3.Selection<SVGGElement, LayoutEdge, SVGGElement, unknown>,
+  parent: d3.Selection<SVGGElement, LayoutEdge, null, undefined>,
   text: string,
   maxWidth: number,
   startDy: number,
