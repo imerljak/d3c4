@@ -6,6 +6,11 @@
     "files": [
         "lib"
     ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/imerljak/d3c4",
+        "directory": "packages/docusaurus-theme-structurizr"
+    },
     "publishConfig": {
         "access": "public"
     },
