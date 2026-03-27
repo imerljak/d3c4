@@ -1,0 +1,40 @@
+{
+    "name": "@d3c4/docusaurus-theme-structurizr",
+    "version": "0.1.0",
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./lib/index.d.ts",
+            "default": "./lib/index.js"
+        },
+        "./remark-plugin": {
+            "types": "./lib/remark-plugin.d.ts",
+            "default": "./lib/remark-plugin.js"
+        }
+    },
+    "scripts": {
+        "build": "tsc && cp -r src/theme/Structurizr/*.css lib/theme/Structurizr/",
+        "dev": "tsc -w",
+        "clean": "rm -rf lib"
+    },
+    "peerDependencies": {
+        "@docusaurus/core": "^2.0.0 || ^3.0.0",
+        "@docusaurus/theme-common": "^2.0.0 || ^3.0.0",
+        "react": "^17.0.0 || ^18.0.0"
+    },
+    "dependencies": {
+        "@d3c4/core": "workspace:*",
+        "@d3c4/dsl": "workspace:*",
+        "@d3c4/react": "workspace:*",
+        "clsx": "^2.0.0",
+        "unist-util-visit": "^5.1.0"
+    },
+    "devDependencies": {
+        "@docusaurus/types": "^3.0.0",
+        "@types/mdast": "^4.0.4",
+        "@types/node": "^20.0.0",
+        "@types/react": "^18.0.0",
+        "typescript": "^5.5.0"
+    }
+}

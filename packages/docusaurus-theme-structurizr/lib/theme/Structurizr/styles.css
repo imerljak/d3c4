@@ -1,0 +1,112 @@
+.structurizr-container {
+    border: 1px solid var(--ifm-color-emphasis-300);
+    border-radius: var(--ifm-pagination-nav-border-radius);
+    margin-bottom: var(--ifm-spacing-vertical);
+    overflow: hidden;
+    background-color: var(--ifm-background-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.structurizr-error {
+    background-color: var(--ifm-color-danger-contrast-background);
+    color: var(--ifm-color-danger-contrast-foreground);
+    padding: 1rem;
+    border-radius: var(--ifm-pagination-nav-border-radius);
+    margin-bottom: var(--ifm-spacing-vertical);
+}
+
+.structurizr-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: var(--ifm-color-emphasis-100);
+    border-bottom: 1px solid var(--ifm-color-emphasis-300);
+    gap: 1rem;
+}
+
+.structurizr-toggles {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.structurizr-select {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--ifm-color-emphasis-400);
+    background-color: var(--ifm-background-surface-color);
+    color: var(--ifm-font-color-base);
+    font-size: 0.85rem;
+}
+
+.structurizr-content {
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+}
+
+@media (min-width: 768px) {
+    .structurizr-content.mode-split {
+        flex-direction: row;
+    }
+}
+
+.structurizr-code-panel {
+    overflow: auto;
+    background-color: var(--ifm-code-background);
+}
+
+.structurizr-code-panel pre {
+    margin: 0;
+    padding: 1rem;
+    background: transparent;
+    border: none;
+}
+
+.structurizr-resizer {
+    width: 6px;
+    flex-shrink: 0;
+    cursor: col-resize;
+    background-color: var(--ifm-color-emphasis-300);
+    position: relative;
+    transition: background-color 0.15s ease;
+    user-select: none;
+}
+
+.structurizr-resizer:hover,
+.structurizr-resizer:active {
+    background-color: var(--ifm-color-primary);
+}
+
+/* Expand hit target without changing visual size */
+.structurizr-resizer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -4px;
+    right: -4px;
+}
+
+@media (max-width: 767px) {
+    .structurizr-resizer {
+        display: none;
+    }
+}
+
+.structurizr-diagram-panel {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    height: 100%;
+    min-height: 0;
+}
+
+.structurizr-empty {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--ifm-color-emphasis-500);
+}
