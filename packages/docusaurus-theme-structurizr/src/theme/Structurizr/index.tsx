@@ -191,6 +191,7 @@ export default function Structurizr({
                             workspace={workspace}
                             viewKey={selectedView}
                             engine={engine}
+                            onNavigate={setSelectedView}
                             style={{ height: '100%', width: '100%' }}
                         />
                     )}
