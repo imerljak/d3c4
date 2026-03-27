@@ -31,16 +31,73 @@ export class ElementRenderer {
   }
 
   render(nodes: LayoutNode[], boundaries: Array<{ element: ResolvedElement }>): void {
-    this.renderBoundaries(boundaries);
+    this.renderBoundaries(boundaries, nodes);
     this.renderNodes(nodes);
   }
 
-  private renderBoundaries(boundaries: Array<{ element: ResolvedElement }>): void {
-    // Boundaries are rendered as dashed outlines with labels
-    // For iteration 1 we render a simple placeholder; full boundary layout comes in iteration 2
+  private renderBoundaries(
+    boundaries: Array<{ element: ResolvedElement }>,
+    nodes: LayoutNode[],
+  ): void {
     const layer = this.canvas.select<SVGGElement>('.d3c4-boundaries');
-    layer.selectAll<SVGGElement, { element: ResolvedElement }>('.d3c4-boundary').remove();
-    // Boundaries are positioned in Iteration 2 with proper clustering
+    layer.selectAll('.d3c4-boundary').remove();
+
+    if (boundaries.length === 0 || nodes.length === 0) return;
+
+    for (const { element } of boundaries) {
+      // Nodes "inside" this boundary: Container children of a SoftwareSystem boundary,
+      // or Component children of a Container boundary.
+      const innerType = element.type === 'SoftwareSystem' ? 'Container' : 'Component';
+      const innerNodes = nodes.filter((n) => n.element.type === innerType);
+      if (innerNodes.length === 0) continue;
+
+      const H_PAD = 20;
+      const TOP_PAD = 20;
+      const BOTTOM_PAD = 52; // extra room for the label at the bottom
+
+      const minX = Math.min(...innerNodes.map((n) => n.x - n.width / 2)) - H_PAD;
+      const minY = Math.min(...innerNodes.map((n) => n.y - n.height / 2)) - TOP_PAD;
+      const maxX = Math.max(...innerNodes.map((n) => n.x + n.width / 2)) + H_PAD;
+      const maxY = Math.max(...innerNodes.map((n) => n.y + n.height / 2)) + BOTTOM_PAD;
+
+      const g = layer.append('g').attr('class', 'd3c4-boundary');
+
+      g.append('rect')
+        .attr('x', minX)
+        .attr('y', minY)
+        .attr('width', maxX - minX)
+        .attr('height', maxY - minY)
+        .attr('fill', element.style.background)
+        .attr('fill-opacity', 0.05)
+        .attr('stroke', element.style.background)
+        .attr('stroke-width', 2)
+        .attr('stroke-dasharray', '10,5');
+
+      // Label at bottom-left, inside the boundary rect
+      const labelX = minX + 10;
+      const badgeFontSize = 11;
+      const nameFontSize = 13;
+      const badgeY = maxY - 8;
+      const nameY = badgeY - badgeFontSize - 2;
+
+      g.append('text')
+        .attr('x', labelX)
+        .attr('y', nameY)
+        .attr('fill', element.style.background)
+        .attr('font-size', nameFontSize)
+        .attr('font-weight', 'bold')
+        .attr('font-family', 'sans-serif')
+        .text(element.name);
+
+      g.append('text')
+        .attr('x', labelX)
+        .attr('y', badgeY)
+        .attr('fill', element.style.background)
+        .attr('font-size', badgeFontSize)
+        .attr('font-family', 'sans-serif')
+        .attr('font-style', 'italic')
+        .text(`[${element.type === 'SoftwareSystem' ? 'Software System' : element.type}]`);
+    }
   }
 
   private renderNodes(nodes: LayoutNode[]): void {

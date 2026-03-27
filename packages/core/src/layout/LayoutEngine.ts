@@ -67,16 +67,16 @@ export interface LayoutOptions {
 
 export class LayoutEngine {
   layout(view: ResolvedView, options: LayoutOptions = {}): LayoutGraph {
-    const g = new dagre.graphlib.Graph({ multigraph: true });
+    const boundaryElements = view.elements.filter((e) => e.boundary);
+    const useCompound = boundaryElements.length > 0;
+
+    const g = new dagre.graphlib.Graph({ compound: useCompound, multigraph: true });
 
     // Map rank direction from Structurizr format to Dagre format
     const rankdir = this.mapRankDirection(
       view.elements[0]?.type, // not used directly
       options.rankDirection ?? 'TB',
     );
-
-    // Determine layout direction from view's automatic layout if available
-    // (already applied via options passed from renderer)
 
     g.setGraph({
       rankdir,
@@ -88,7 +88,14 @@ export class LayoutEngine {
     });
     g.setDefaultEdgeLabel(() => ({}));
 
-    // Add non-boundary nodes
+    // Register cluster nodes for each boundary (dagre sizes them from their children)
+    if (useCompound) {
+      for (const b of boundaryElements) {
+        g.setNode(`__boundary_${b.id}`, { label: b.name });
+      }
+    }
+
+    // Add non-boundary nodes, assigning children to their cluster when applicable
     const nonBoundary = view.elements.filter((e) => !e.boundary);
 
     for (const el of nonBoundary) {
@@ -96,6 +103,17 @@ export class LayoutEngine {
         ? [PERSON_WIDTH, estimatePersonHeight(el)]
         : [DEFAULT_WIDTH, estimateNodeHeight(el)];
       g.setNode(el.id, { width: w, height: h, label: el.name });
+
+      if (useCompound) {
+        // SoftwareSystem boundary → cluster its Containers
+        // Container boundary → cluster its Components
+        const parent = boundaryElements.find(
+          (b) =>
+            (b.type === 'SoftwareSystem' && el.type === 'Container') ||
+            (b.type === 'Container' && el.type === 'Component'),
+        );
+        if (parent) g.setParent(el.id, `__boundary_${parent.id}`);
+      }
     }
 
     // Add edges (only between non-boundary elements)

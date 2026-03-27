@@ -5,7 +5,7 @@ import { LayoutEngine } from '../layout/LayoutEngine.js';
 import { SvgCanvas } from './SvgCanvas.js';
 import { ElementRenderer } from './ElementRenderer.js';
 import { RelationshipRenderer } from './RelationshipRenderer.js';
-import { DragHandler } from './DragHandler.js';
+// import { DragHandler } from './DragHandler.js';
 import { NavigationHandler } from './NavigationHandler.js';
 import type { ResolvedElement, ResolvedRelationship, ResolvedWorkspace } from '../parser/types.js';
 
@@ -53,7 +53,7 @@ export class Renderer {
   private svgCanvas: SvgCanvas | null = null;
   private elementRenderer: ElementRenderer | null = null;
   private relRenderer: RelationshipRenderer | null = null;
-  private dragHandler: DragHandler | null = null;
+  // private dragHandler: DragHandler | null = null;
   private navigationHandler: NavigationHandler | null = null;
 
   constructor(
@@ -101,7 +101,7 @@ export class Renderer {
 
       this.elementRenderer!.render(layoutGraph.nodes, boundaryElements);
       this.relRenderer!.render(layoutGraph.edges);
-      this.dragHandler!.attach(layoutGraph.nodes);
+      // this.dragHandler!.attach(layoutGraph.nodes);
       this.navigationHandler!.attach(layoutGraph.nodes, this.resolved!.views);
 
       if (this.options.fitOnRender !== false) {
@@ -146,7 +146,7 @@ export class Renderer {
     this.svgCanvas = null;
     this.elementRenderer = null;
     this.relRenderer = null;
-    this.dragHandler = null;
+    // this.dragHandler = null;
     this.navigationHandler = null;
     this.resolved = null;
   }
@@ -171,7 +171,7 @@ export class Renderer {
       onRelationshipClick: this.options.onRelationshipClick,
     });
 
-    this.dragHandler = new DragHandler(this.svgCanvas.canvas);
+    // this.dragHandler = new DragHandler(this.svgCanvas.canvas);
 
     this.navigationHandler = new NavigationHandler(
       this.svgCanvas.canvas,
