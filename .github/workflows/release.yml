@@ -41,6 +41,11 @@ jobs:
       - name: Run tests
         run: pnpm test
 
+      - name: Verify npm OIDC auth
+        run: npm whoami
+        env:
+          NPM_CONFIG_PROVENANCE: "true"
+
       # Pending changeset files  → open/update the "Version Packages" PR
       # No pending changesets    → publish to npm (after the PR was merged)
       - name: Create Release PR or Publish to npm
