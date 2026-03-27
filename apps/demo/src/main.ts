@@ -66,7 +66,9 @@ viewSelect.addEventListener('change', () => {
   renderer?.render(viewSelect.value);
 });
 
-renderBtn.addEventListener('click', renderDiagram);
+renderBtn.addEventListener('click', () => {
+    renderer?.update(parseDsl(dslTextarea.value))
+});
 
 fitBtn.addEventListener('click', () => {
   renderer?.fitToView();
