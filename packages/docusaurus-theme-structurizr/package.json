@@ -1,9 +1,11 @@
 {
     "name": "@d3c4/docusaurus-theme-structurizr",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
-    "files": ["lib"],
+    "files": [
+        "lib"
+    ],
     "publishConfig": {
         "access": "public"
     },
