@@ -3,27 +3,24 @@ import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import remarkStructurizr from '@d3c4/docusaurus-theme-structurizr/remark-plugin';
 
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
-
 const config: Config = {
   title: 'd3c4',
-  tagline: 'Diagrams as Code',
+  tagline: 'Structurizr C4 diagrams powered by D3.js',
   favicon: 'img/favicon.ico',
 
-  // Set the production url of your site here
   url: 'https://imerljak.github.io',
   baseUrl: '/d3c4/',
 
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'imerljak', // Usually your GitHub org/user name.
-  projectName: 'd3c4', // Usually your repo name.
+  organizationName: 'imerljak',
+  projectName: 'd3c4',
 
   onBrokenLinks: 'throw',
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
 
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
@@ -34,10 +31,11 @@ const config: Config = {
       'classic',
       {
         docs: {
+          // Serve docs at the site root instead of /docs/
+          routeBasePath: '/',
           sidebarPath: './sidebars.ts',
           remarkPlugins: [remarkStructurizr],
-          editUrl:
-            'https://github.com/imerljak/d3c4/tree/main/apps/docs',
+          editUrl: 'https://github.com/imerljak/d3c4/tree/main/apps/docs',
         },
         blog: false,
         theme: {
@@ -50,7 +48,6 @@ const config: Config = {
   themes: ['@d3c4/docusaurus-theme-structurizr'],
 
   themeConfig: {
-    // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     structurizr: {
       defaultEngine: 'dagre',
@@ -62,34 +59,61 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'My Site',
+      title: 'd3c4',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'd3c4 logo',
         src: 'img/logo.svg',
-        href: '/docs/',
       },
       items: [
         {
-          type: "doc",
-          position: "left",
-          docId: "homepage",
-          label: "Docs",
+          to: '/getting-started',
+          label: 'Getting Started',
+          position: 'left',
         },
         {
-          href: 'https://github.com/facebook/docusaurus',
-          label: 'GitHub',
+          to: '/dsl',
+          label: 'DSL Reference',
+          position: 'left',
+        },
+        {
+          to: '/api/core',
+          label: 'API',
+          position: 'left',
+        },
+        {
+          href: 'https://github.com/imerljak/d3c4',
           position: 'right',
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository',
         },
       ],
     },
     footer: {
       style: 'dark',
-      links: [],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      links: [
+        {
+          title: 'Docs',
+          items: [
+            { label: 'Getting Started', to: '/getting-started' },
+            { label: 'DSL Reference', to: '/dsl' },
+            { label: 'API Reference', to: '/api/core' },
+          ],
+        },
+        {
+          title: 'More',
+          items: [
+            { label: 'GitHub', href: 'https://github.com/imerljak/d3c4' },
+            { label: 'npm', href: 'https://www.npmjs.com/package/@d3c4/core' },
+            { label: 'Changelog', href: 'https://github.com/imerljak/d3c4/releases' },
+          ],
+        },
+      ],
+      copyright: `Copyright © ${new Date().getFullYear()} imerljak. Licensed under Apache 2.0.`,
     },
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+      additionalLanguages: ['bash', 'typescript'],
     },
   } satisfies Preset.ThemeConfig,
 };

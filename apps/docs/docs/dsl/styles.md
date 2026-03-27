@@ -33,13 +33,11 @@ element "TagName" {
 ```structurizr
 workspace {
   model {
-    user    = person "User"
-    app     = softwareSystem "App"
-    cache   = softwareSystem "Cache" "Redis" "Cache"
-    db      = softwareSystem "Database" "PostgreSQL" "Database"
-    user -> app   "Uses"
-    app  -> cache "Reads/writes"
-    app  -> db    "Stores data"
+    user = person "User"
+    app  = softwareSystem "App"
+    db   = softwareSystem "Database"
+    user -> app "Uses"
+    app  -> db  "Stores data"
   }
   views {
     systemContext app "Context" {
@@ -47,10 +45,8 @@ workspace {
       autoLayout TB
     }
     styles {
-      element "Person"          { shape Person   background #08427b color #ffffff }
+      element "Person"          { shape Person     background #08427b color #ffffff }
       element "Software System" { shape RoundedBox background #1168bd color #ffffff }
-      element "Cache"           { shape Cylinder background #f4a261 color #000000 }
-      element "Database"        { shape Cylinder background #2a9d8f color #ffffff }
     }
   }
 }
@@ -92,8 +88,8 @@ workspace {
     user = person "User"
     app  = softwareSystem "App"
     db   = softwareSystem "Database"
-    user -> app "Uses"           "HTTPS"   "Sync"
-    app  -> db  "Reads/writes"   "SQL"     "Async"
+    user -> app "Uses"         "HTTPS"
+    app  -> db  "Reads/writes" "SQL"
   }
   views {
     systemContext app "Context" {
@@ -103,8 +99,7 @@ workspace {
     styles {
       element "Person"          { shape Person background #08427b color #ffffff }
       element "Software System" { background #1168bd color #ffffff }
-      relationship "Sync"       { color #000000 thickness 2 dashed false }
-      relationship "Async"      { color #888888 thickness 1 dashed true }
+      relationship "Relationship" { color #666666 thickness 2 dashed false }
     }
   }
 }
@@ -112,7 +107,11 @@ workspace {
 
 ## Custom tags
 
-Add extra tags to any element to apply specific styles:
+:::note
+Custom inline tags on elements and relationships are not yet supported by the d3c4 DSL parser. Only the implicit type-based tags (`Person`, `Software System`, `Container`, `Component`) are available today.
+:::
+
+In the full Structurizr DSL, you can add extra tags to any element to apply specific styles:
 
 ```
 db = softwareSystem "Database" "PostgreSQL" "Database,External"
@@ -125,4 +124,4 @@ element "Database" { shape Cylinder }
 element "External" { background #999999 }
 ```
 
-When multiple styles match an element, the most specific tag wins (last definition takes precedence).
+When multiple styles match an element, the last matching definition takes precedence.
