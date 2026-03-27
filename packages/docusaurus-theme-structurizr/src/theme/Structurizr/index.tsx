@@ -66,30 +66,23 @@ export default function Structurizr({
     const { workspace, error } = parseResult;
 
     // View extraction
-    const viewKeys = useMemo(() => {
+    const views = useMemo(() => {
         if (!workspace) return [];
-        const keys: string[] = [];
-        if (workspace.views.systemLandscapeViews) {
-            keys.push(...workspace.views.systemLandscapeViews.map(v => v.key));
-        }
-        if (workspace.views.systemContextViews) {
-            keys.push(...workspace.views.systemContextViews.map(v => v.key));
-        }
-        if (workspace.views.containerViews) {
-            keys.push(...workspace.views.containerViews.map(v => v.key));
-        }
-        if (workspace.views.componentViews) {
-            keys.push(...workspace.views.componentViews.map(v => v.key));
-        }
-        return keys;
+        const all = [
+            ...(workspace.views.systemLandscapeViews ?? []),
+            ...(workspace.views.systemContextViews ?? []),
+            ...(workspace.views.containerViews ?? []),
+            ...(workspace.views.componentViews ?? []),
+        ];
+        return all.map(v => ({ key: v.key, title: v.title, description: v.description }));
     }, [workspace]);
 
-    // Set default view once viewKeys are known
+    // Set default view once views are known
     useEffect(() => {
-        if (viewKeys.length > 0 && (!selectedView || !viewKeys.includes(selectedView))) {
-            setSelectedView(viewKeys[0]);
+        if (views.length > 0 && (!selectedView || !views.some(v => v.key === selectedView))) {
+            setSelectedView(views[0].key);
         }
-    }, [viewKeys, selectedView]);
+    }, [views, selectedView]);
 
     const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
         if (mode !== 'split' || !containerRef.current) return;
@@ -135,8 +128,12 @@ export default function Structurizr({
                     className="structurizr-select"
                     title="Select Workspace View"
                 >
-                    {viewKeys.length === 0 && <option value="" disabled>No views found</option>}
-                    {viewKeys.map(k => <option key={k} value={k}>{k}</option>)}
+                    {views.length === 0 && <option value="" disabled>No views found</option>}
+                    {views.map(({ key, title, description }) => {
+                        const label = title && description ? `${title} — ${description}`
+                            : title ?? description ?? key;
+                        return <option key={key} value={key}>{label}</option>;
+                    })}
                 </select>
 
                 <div className="structurizr-toggles">

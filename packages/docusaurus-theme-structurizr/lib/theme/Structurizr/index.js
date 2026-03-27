@@ -47,30 +47,23 @@ function Structurizr({ dsl, className, defaultView, defaultEngine, defaultMode, 
     }, [dsl]);
     const { workspace, error } = parseResult;
     // View extraction
-    const viewKeys = (0, react_1.useMemo)(() => {
+    const views = (0, react_1.useMemo)(() => {
         if (!workspace)
             return [];
-        const keys = [];
-        if (workspace.views.systemLandscapeViews) {
-            keys.push(...workspace.views.systemLandscapeViews.map(v => v.key));
-        }
-        if (workspace.views.systemContextViews) {
-            keys.push(...workspace.views.systemContextViews.map(v => v.key));
-        }
-        if (workspace.views.containerViews) {
-            keys.push(...workspace.views.containerViews.map(v => v.key));
-        }
-        if (workspace.views.componentViews) {
-            keys.push(...workspace.views.componentViews.map(v => v.key));
-        }
-        return keys;
+        const all = [
+            ...(workspace.views.systemLandscapeViews ?? []),
+            ...(workspace.views.systemContextViews ?? []),
+            ...(workspace.views.containerViews ?? []),
+            ...(workspace.views.componentViews ?? []),
+        ];
+        return all.map(v => ({ key: v.key, title: v.title, description: v.description }));
     }, [workspace]);
-    // Set default view once viewKeys are known
+    // Set default view once views are known
     (0, react_1.useEffect)(() => {
-        if (viewKeys.length > 0 && (!selectedView || !viewKeys.includes(selectedView))) {
-            setSelectedView(viewKeys[0]);
+        if (views.length > 0 && (!selectedView || !views.some(v => v.key === selectedView))) {
+            setSelectedView(views[0].key);
         }
-    }, [viewKeys, selectedView]);
+    }, [views, selectedView]);
     const handlePointerDown = (0, react_1.useCallback)((e) => {
         if (mode !== 'split' || !containerRef.current)
             return;
@@ -98,6 +91,10 @@ function Structurizr({ dsl, className, defaultView, defaultEngine, defaultMode, 
     }
     if (!workspace)
         return null;
-    return ((0, jsx_runtime_1.jsxs)("div", { className: (0, clsx_1.default)('structurizr-container', className), children: [(0, jsx_runtime_1.jsxs)("div", { className: "structurizr-toolbar", children: [(0, jsx_runtime_1.jsxs)("select", { value: selectedView ?? '', onChange: (e) => setSelectedView(e.target.value), className: "structurizr-select", title: "Select Workspace View", children: [viewKeys.length === 0 && (0, jsx_runtime_1.jsx)("option", { value: "", disabled: true, children: "No views found" }), viewKeys.map(k => (0, jsx_runtime_1.jsx)("option", { value: k, children: k }, k))] }), (0, jsx_runtime_1.jsxs)("div", { className: "structurizr-toggles", children: [allowedEngines.length > 1 && ((0, jsx_runtime_1.jsx)("select", { value: engine, onChange: (e) => setEngine(e.target.value), className: "structurizr-select", title: "Select Render Engine", children: allowedEngines.map(e => ((0, jsx_runtime_1.jsx)("option", { value: e, children: ENGINE_LABELS[e] }, e))) })), allowedModes.length > 1 && ((0, jsx_runtime_1.jsx)("select", { value: mode, onChange: (e) => setMode(e.target.value), className: "structurizr-select", title: "Select Display Mode", children: allowedModes.map(m => ((0, jsx_runtime_1.jsx)("option", { value: m, children: MODE_LABELS[m] }, m))) }))] })] }), (0, jsx_runtime_1.jsxs)("div", { className: (0, clsx_1.default)('structurizr-content', `mode-${mode}`), ref: containerRef, children: [mode === 'split' && ((0, jsx_runtime_1.jsx)("div", { className: "structurizr-code-panel", style: { flexBasis: `${codePanelWidthPct}%`, flexGrow: 0, flexShrink: 0 }, children: (0, jsx_runtime_1.jsx)("pre", { children: (0, jsx_runtime_1.jsx)("code", { children: dsl }) }) })), mode === 'split' && ((0, jsx_runtime_1.jsx)("div", { className: "structurizr-resizer", onPointerDown: handlePointerDown, role: "separator", "aria-orientation": "vertical", "aria-label": "Resize panels" })), (0, jsx_runtime_1.jsxs)("div", { className: "structurizr-diagram-panel", children: [selectedView && ((0, jsx_runtime_1.jsx)(react_2.D3C4Diagram, { workspace: workspace, viewKey: selectedView, engine: engine, style: { height: '100%', width: '100%' } })), !selectedView && (0, jsx_runtime_1.jsx)("div", { className: "structurizr-empty", children: "No views defined in DSL" })] })] })] }));
+    return ((0, jsx_runtime_1.jsxs)("div", { className: (0, clsx_1.default)('structurizr-container', className), children: [(0, jsx_runtime_1.jsxs)("div", { className: "structurizr-toolbar", children: [(0, jsx_runtime_1.jsxs)("select", { value: selectedView ?? '', onChange: (e) => setSelectedView(e.target.value), className: "structurizr-select", title: "Select Workspace View", children: [views.length === 0 && (0, jsx_runtime_1.jsx)("option", { value: "", disabled: true, children: "No views found" }), views.map(({ key, title, description }) => {
+                                const label = title && description ? `${title} — ${description}`
+                                    : title ?? description ?? key;
+                                return (0, jsx_runtime_1.jsx)("option", { value: key, children: label }, key);
+                            })] }), (0, jsx_runtime_1.jsxs)("div", { className: "structurizr-toggles", children: [allowedEngines.length > 1 && ((0, jsx_runtime_1.jsx)("select", { value: engine, onChange: (e) => setEngine(e.target.value), className: "structurizr-select", title: "Select Render Engine", children: allowedEngines.map(e => ((0, jsx_runtime_1.jsx)("option", { value: e, children: ENGINE_LABELS[e] }, e))) })), allowedModes.length > 1 && ((0, jsx_runtime_1.jsx)("select", { value: mode, onChange: (e) => setMode(e.target.value), className: "structurizr-select", title: "Select Display Mode", children: allowedModes.map(m => ((0, jsx_runtime_1.jsx)("option", { value: m, children: MODE_LABELS[m] }, m))) }))] })] }), (0, jsx_runtime_1.jsxs)("div", { className: (0, clsx_1.default)('structurizr-content', `mode-${mode}`), ref: containerRef, children: [mode === 'split' && ((0, jsx_runtime_1.jsx)("div", { className: "structurizr-code-panel", style: { flexBasis: `${codePanelWidthPct}%`, flexGrow: 0, flexShrink: 0 }, children: (0, jsx_runtime_1.jsx)("pre", { children: (0, jsx_runtime_1.jsx)("code", { children: dsl }) }) })), mode === 'split' && ((0, jsx_runtime_1.jsx)("div", { className: "structurizr-resizer", onPointerDown: handlePointerDown, role: "separator", "aria-orientation": "vertical", "aria-label": "Resize panels" })), (0, jsx_runtime_1.jsxs)("div", { className: "structurizr-diagram-panel", children: [selectedView && ((0, jsx_runtime_1.jsx)(react_2.D3C4Diagram, { workspace: workspace, viewKey: selectedView, engine: engine, style: { height: '100%', width: '100%' } })), !selectedView && (0, jsx_runtime_1.jsx)("div", { className: "structurizr-empty", children: "No views defined in DSL" })] })] })] }));
 }
 //# sourceMappingURL=index.js.map
