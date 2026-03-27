@@ -1,5 +1,15 @@
 # @d3c4/docusaurus-theme-structurizr
 
+## 0.1.2
+
+### Patch Changes
+
+- 7886535: View selector uses title + description if available
+- 9d30fdd: fixes view selector to react to diagram navigation events
+  - @d3c4/dsl@0.1.2
+  - @d3c4/core@0.1.2
+  - @d3c4/react@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes
