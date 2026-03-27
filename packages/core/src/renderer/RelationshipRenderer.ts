@@ -66,7 +66,7 @@ export class RelationshipRenderer {
         .attr('d', lineFn(d.points) ?? '')
         .attr('fill', 'none')
         .attr('stroke', style.color)
-        .attr('stroke-width', style.thickness)
+        .attr('stroke-width', style.thickness * .5)
         .attr('stroke-dasharray', style.dashed ? '6,3' : 'none')
         .attr('marker-end', markerUrl);
 
@@ -81,7 +81,7 @@ export class RelationshipRenderer {
       // Label — position at midpoint of the path
       if (d.relationship.description || d.relationship.technology) {
         const mid = getMidPoint(d.points);
-        const labelG = g.append('g').attr('transform', `translate(${mid.x}, ${mid.y})`);
+        const labelG = g.append('g').attr('class', 'd3c4-edge-label').attr('transform', `translate(${mid.x}, ${mid.y})`);
 
         const LABEL_MAX_WIDTH = 120;
         let dy = 0;
@@ -96,6 +96,25 @@ export class RelationshipRenderer {
             labelG, `[${d.relationship.technology}]`, LABEL_MAX_WIDTH, dy,
             style.color, style.fontSize, true,
           );
+        }
+
+        // Insert a background rect behind the text using the rendered bounding box.
+        const labelNode = labelG.node();
+        if (labelNode) {
+          try {
+            const bbox = labelNode.getBBox();
+            const pad = 2;
+            labelG.insert('rect', ':first-child')
+              .attr('x', bbox.x - pad)
+              .attr('y', bbox.y - pad)
+              .attr('width', bbox.width + pad * 2)
+              .attr('height', bbox.height + pad * 2)
+              .attr('fill', '#ffffff')
+              .attr('rx', 2)
+              .attr('opacity', 1);
+          } catch {
+            // getBBox is unavailable in non-DOM environments (e.g. tests)
+          }
         }
       }
     });

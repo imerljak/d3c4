@@ -53,6 +53,9 @@ function renderDiagram() {
       onElementClick: (el) => {
         console.log('[d3c4] Element clicked:', el.name, el.type);
       },
+      onNavigate: (viewKey) => {
+        viewSelect.value = viewKey
+      }
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -63,6 +66,7 @@ function renderDiagram() {
 }
 
 viewSelect.addEventListener('change', () => {
+  console.log("ViewSelect", "changed")
   renderer?.render(viewSelect.value);
 });
 
