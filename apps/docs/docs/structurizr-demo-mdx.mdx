@@ -1,0 +1,68 @@
+---
+sidebar_position: 3
+slug: /mdx
+---
+
+import Structurizr from '@theme/Structurizr';
+
+# Structurizr Component Demo
+
+This page demonstrates the `<Structurizr>` MDX component from `@d3c4/docusaurus-theme-structurizr`. Use this approach when you want to embed an interactive diagram directly inside an MDX page.
+
+## Component Usage
+
+Import the component and pass your DSL as the `dsl` prop:
+
+```mdx
+import Structurizr from '@theme/Structurizr';
+
+<Structurizr dsl={`
+workspace "My Workspace" {
+  ...
+}
+`} />
+```
+
+## Live Example
+
+<Structurizr dsl={`workspace "Big Bank plc" "This is an example workspace." {
+  model {
+    customer = person "Personal Banking Customer" "A customer of the bank."
+    bank = softwareSystem "Internet Banking System" "Allows customers to view their accounts." {
+      web = container "Web Application" "Delivers the web UI." "Java/Spring MVC"
+      api = container "API Application" "Provides internet banking API." "Java/Spring MVC"
+      db = container "Database" "Stores user registration info." "Oracle Database"
+    }
+    mainframe = softwareSystem "Mainframe Banking System" "Stores core banking information."
+
+    customer -> bank "Views account balances using"
+    bank -> mainframe "Gets account information from"
+    web -> api "Makes API calls to" "JSON/HTTPS"
+    api -> db "Reads from and writes to" "JDBC"
+  }
+  views {
+    systemContext bank "SystemContext" "System context diagram for Internet Banking." {
+      include *
+      autoLayout TB
+    }
+    container bank "Containers" "Container diagram for Internet Banking." {
+      include *
+      autoLayout TB
+    }
+    styles {
+      element "Person" {
+        background #08427b
+        color #ffffff
+        shape Person
+      }
+      element "Software System" {
+        background #1168bd
+        color #ffffff
+      }
+      element "Container" {
+        background #438dd5
+        color #ffffff
+      }
+    }
+  }
+}`} />
