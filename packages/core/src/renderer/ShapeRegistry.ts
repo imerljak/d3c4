@@ -18,7 +18,7 @@ function drawBox(sel: NodeSel, style: ResolvedElementStyle): void {
     .attr('height', (d: LayoutNode) => d.height)
     .attr('fill', style.background)
     .attr('stroke', style.stroke)
-    .attr('stroke-width', 2)
+    .attr('stroke-width', ELEMENT_STROKE_WIDTH)
     .attr('rx', 0)
     .attr('ry', 0);
 }
@@ -31,10 +31,17 @@ function drawRoundedBox(sel: NodeSel, style: ResolvedElementStyle): void {
     .attr('height', (d: LayoutNode) => d.height)
     .attr('fill', style.background)
     .attr('stroke', style.stroke)
-    .attr('stroke-width', 2)
+    .attr('stroke-width', ELEMENT_STROKE_WIDTH)
     .attr('rx', 8)
     .attr('ry', 8);
 }
+
+// PERSON_BODY_Y must stay in sync with PERSON_BODY_Y in LayoutEngine and
+// PERSON_TEXT_START_Y in ElementRenderer.
+const PERSON_HEAD_CY = 24;
+const PERSON_HEAD_R = 35;
+const PERSON_BODY_Y = PERSON_HEAD_CY + PERSON_HEAD_R - 4;
+const ELEMENT_STROKE_WIDTH = 0;
 
 function drawPerson(sel: NodeSel, style: ResolvedElementStyle): void {
   // Head circle
@@ -42,24 +49,24 @@ function drawPerson(sel: NodeSel, style: ResolvedElementStyle): void {
     .append('circle')
     .attr('class', 'd3c4-shape-head')
     .attr('cx', (d: LayoutNode) => d.width / 2)
-    .attr('cy', 24)
-    .attr('r', 20)
+    .attr('cy', PERSON_HEAD_CY)
+    .attr('r', PERSON_HEAD_R)
     .attr('fill', style.background)
     .attr('stroke', style.stroke)
-    .attr('stroke-width', 2);
+    .attr('stroke-width', ELEMENT_STROKE_WIDTH);
 
-  // Body rectangle
+  // Body rectangle — full element width, dynamic height
   sel
     .append('rect')
     .attr('class', 'd3c4-shape-body')
-    .attr('x', (d: LayoutNode) => d.width / 2 - 28)
-    .attr('y', 46)
-    .attr('width', 56)
-    .attr('height', 40)
+    .attr('x', 0)
+    .attr('y', PERSON_BODY_Y)
+    .attr('width', (d: LayoutNode) => d.width)
+    .attr('height', (d: LayoutNode) => d.height - PERSON_BODY_Y - 4)
     .attr('rx', 6)
     .attr('fill', style.background)
     .attr('stroke', style.stroke)
-    .attr('stroke-width', 2);
+    .attr('stroke-width', ELEMENT_STROKE_WIDTH);
 }
 
 function drawCylinder(sel: NodeSel, style: ResolvedElementStyle): void {
@@ -76,7 +83,7 @@ function drawCylinder(sel: NodeSel, style: ResolvedElementStyle): void {
       .attr('height', h - ry * 2)
       .attr('fill', style.background)
       .attr('stroke', style.stroke)
-      .attr('stroke-width', 2);
+      .attr('stroke-width', ELEMENT_STROKE_WIDTH);
     s.append('ellipse')
       .attr('cx', w / 2)
       .attr('cy', ry)
@@ -84,7 +91,7 @@ function drawCylinder(sel: NodeSel, style: ResolvedElementStyle): void {
       .attr('ry', ry)
       .attr('fill', style.background)
       .attr('stroke', style.stroke)
-      .attr('stroke-width', 2);
+      .attr('stroke-width', ELEMENT_STROKE_WIDTH);
     s.append('ellipse')
       .attr('cx', w / 2)
       .attr('cy', h - ry)
@@ -92,7 +99,7 @@ function drawCylinder(sel: NodeSel, style: ResolvedElementStyle): void {
       .attr('ry', ry)
       .attr('fill', style.background)
       .attr('stroke', style.stroke)
-      .attr('stroke-width', 2);
+      .attr('stroke-width', ELEMENT_STROKE_WIDTH);
   });
 }
 
@@ -105,7 +112,7 @@ function drawCircle(sel: NodeSel, style: ResolvedElementStyle): void {
     .attr('r', (d: LayoutNode) => Math.min(d.width, d.height) / 2)
     .attr('fill', style.background)
     .attr('stroke', style.stroke)
-    .attr('stroke-width', 2);
+    .attr('stroke-width', ELEMENT_STROKE_WIDTH);
 }
 
 function drawEllipse(sel: NodeSel, style: ResolvedElementStyle): void {
@@ -118,7 +125,7 @@ function drawEllipse(sel: NodeSel, style: ResolvedElementStyle): void {
     .attr('ry', (d: LayoutNode) => d.height / 2)
     .attr('fill', style.background)
     .attr('stroke', style.stroke)
-    .attr('stroke-width', 2);
+    .attr('stroke-width', ELEMENT_STROKE_WIDTH);
 }
 
 function drawHexagon(sel: NodeSel, style: ResolvedElementStyle): void {
@@ -145,7 +152,7 @@ function drawHexagon(sel: NodeSel, style: ResolvedElementStyle): void {
     })
     .attr('fill', style.background)
     .attr('stroke', style.stroke)
-    .attr('stroke-width', 2);
+    .attr('stroke-width', ELEMENT_STROKE_WIDTH);
 }
 
 function drawComponent(sel: NodeSel, style: ResolvedElementStyle): void {
@@ -160,7 +167,7 @@ function drawComponent(sel: NodeSel, style: ResolvedElementStyle): void {
       .attr('rx', 4)
       .attr('fill', style.background)
       .attr('stroke', style.stroke)
-      .attr('stroke-width', 2);
+      .attr('stroke-width', ELEMENT_STROKE_WIDTH);
     const notchW = 12;
     const notchH = 8;
     const notchX = -notchW / 2;
@@ -181,7 +188,7 @@ function drawComponent(sel: NodeSel, style: ResolvedElementStyle): void {
       .attr('rx', 2)
       .attr('fill', style.background)
       .attr('stroke', style.stroke)
-      .attr('stroke-width', 2);
+      .attr('stroke-width', ELEMENT_STROKE_WIDTH);
   });
 }
 

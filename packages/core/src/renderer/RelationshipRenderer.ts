@@ -83,29 +83,70 @@ export class RelationshipRenderer {
         const mid = getMidPoint(d.points);
         const labelG = g.append('g').attr('transform', `translate(${mid.x}, ${mid.y})`);
 
-        // Background for readability
-        const labelParts: string[] = [];
-        if (d.relationship.description) labelParts.push(d.relationship.description);
-        if (d.relationship.technology) labelParts.push(`[${d.relationship.technology}]`);
-
+        const LABEL_MAX_WIDTH = 120;
         let dy = 0;
-        for (const part of labelParts) {
-          const isDesc = part === d.relationship.description;
-          labelG
-            .append('text')
-            .attr('class', isDesc ? 'd3c4-edge-description' : 'd3c4-edge-technology')
-            .attr('text-anchor', 'middle')
-            .attr('dy', dy)
-            .attr('fill', style.color)
-            .attr('font-size', style.fontSize)
-            .attr('font-family', 'sans-serif')
-            .attr('font-style', isDesc ? 'normal' : 'italic')
-            .text(part);
-          dy += style.fontSize + 2;
+        if (d.relationship.description) {
+          dy = wrapLabelText(
+            labelG, d.relationship.description, LABEL_MAX_WIDTH, dy,
+            style.color, style.fontSize, false,
+          );
+        }
+        if (d.relationship.technology) {
+          wrapLabelText(
+            labelG, `[${d.relationship.technology}]`, LABEL_MAX_WIDTH, dy,
+            style.color, style.fontSize, true,
+          );
         }
       }
     });
   }
+}
+
+/**
+ * Renders word-wrapped text into a label <g> element.
+ * Returns the dy offset to use for the next text block below.
+ */
+function wrapLabelText(
+  parent: d3.Selection<SVGGElement, LayoutEdge, SVGGElement, unknown>,
+  text: string,
+  maxWidth: number,
+  startDy: number,
+  color: string,
+  fontSize: number,
+  italic: boolean,
+): number {
+  const charsPerLine = Math.floor(maxWidth / (fontSize * 0.55));
+  const words = text.split(' ');
+  const lines: string[] = [];
+  let currentLine = '';
+  for (const word of words) {
+    const test = currentLine ? `${currentLine} ${word}` : word;
+    if (test.length > charsPerLine && currentLine) {
+      lines.push(currentLine);
+      currentLine = word;
+    } else {
+      currentLine = test;
+    }
+  }
+  if (currentLine) lines.push(currentLine);
+
+  const textEl = parent
+    .append('text')
+    .attr('text-anchor', 'middle')
+    .attr('fill', color)
+    .attr('font-size', fontSize)
+    .attr('font-family', 'sans-serif')
+    .attr('font-style', italic ? 'italic' : 'normal');
+
+  for (let i = 0; i < lines.length; i++) {
+    textEl
+      .append('tspan')
+      .attr('x', 0)
+      .attr('dy', i === 0 ? startDy : fontSize * 1.2)
+      .text(lines[i]!);
+  }
+
+  return startDy + (lines.length - 1) * fontSize * 1.2 + fontSize + 4;
 }
 
 function getMidPoint(points: Array<{ x: number; y: number }>): { x: number; y: number } {

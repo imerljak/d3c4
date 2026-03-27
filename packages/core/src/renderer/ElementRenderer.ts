@@ -90,7 +90,8 @@ export class ElementRenderer {
       const labelG = g.append('g').attr('class', 'd3c4-label-group');
 
       const isPerson = style.shape === 'Person';
-      const textStartY = isPerson ? d.height - 36 : 0;
+      // For Person: body rect starts at y=46; add 8px top padding → first text at y=54.
+      const textStartY = isPerson ? 54 : 0;
 
       // Type badge (e.g. [Person], [Container: Java])
       const badge = buildTypeBadge(d.element);
@@ -112,7 +113,7 @@ export class ElementRenderer {
         ? textStartY + style.fontSize * 0.8 + style.fontSize + 4
         : textStartY + (isPerson ? 4 : d.height / 2 - (d.element.description ? style.fontSize : style.fontSize / 2));
 
-      wrapText(
+      const nameExtraHeight = wrapText(
         labelG,
         d.element.name,
         d.width - 16,
@@ -125,7 +126,8 @@ export class ElementRenderer {
 
       // Description (smaller, optional)
       if (d.element.description) {
-        const descY = nameY + style.fontSize + 6;
+        const descFontSize = Math.max(style.fontSize - 3, 10);
+        const descY = nameY + nameExtraHeight + descFontSize + 6;
         wrapText(
           labelG,
           d.element.description,
@@ -133,7 +135,7 @@ export class ElementRenderer {
           d.width / 2,
           descY,
           style.color,
-          Math.max(style.fontSize - 3, 10),
+          descFontSize,
           false,
         );
       }
@@ -162,7 +164,7 @@ function wrapText(
   color: string,
   fontSize: number,
   bold: boolean,
-): void {
+): number {
   const textEl = parent
     .append('text')
     .attr('x', x)
@@ -197,4 +199,6 @@ function wrapText(
       .attr('dy', i === 0 ? 0 : fontSize * 1.2)
       .text(lines[i]!);
   }
+
+  return (lines.length - 1) * fontSize * 1.2;
 }

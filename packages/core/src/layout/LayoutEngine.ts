@@ -1,12 +1,60 @@
 import dagre from 'dagre';
-import type { ResolvedView } from '../parser/types.js';
+import type { ResolvedView, ResolvedElement } from '../parser/types.js';
 import type { LayoutGraph, LayoutNode, LayoutEdge } from './types.js';
 
 // Default node dimensions per shape
 const DEFAULT_WIDTH = 160;
-const DEFAULT_HEIGHT = 90;
-const PERSON_WIDTH = 100;
-const PERSON_HEIGHT = 120;
+const PERSON_WIDTH = DEFAULT_WIDTH;
+// PERSON_BODY_Y must match the constant in ShapeRegistry (46)
+const PERSON_BODY_Y = 46;
+
+function estimateLineCount(text: string, charsPerLine: number): number {
+  const words = text.split(' ');
+  let lines = 1;
+  let lineLen = 0;
+  for (const word of words) {
+    if (lineLen > 0 && lineLen + 1 + word.length > charsPerLine) {
+      lines++;
+      lineLen = word.length;
+    } else {
+      lineLen = lineLen > 0 ? lineLen + 1 + word.length : word.length;
+    }
+  }
+  return lines;
+}
+
+function estimatePersonHeight(el: ResolvedElement): number {
+  const fontSize = el.style.fontSize;
+  const textWidth = PERSON_WIDTH - 16;
+  const badgeFontSize = Math.max(fontSize - 3, 10);
+  const charsPerLineNormal = Math.floor(textWidth / (fontSize * 0.55));
+  const charsPerLineSmall = Math.floor(textWidth / (badgeFontSize * 0.55));
+
+  const nameLines = estimateLineCount(el.name, charsPerLineNormal);
+  const nameH = fontSize + (nameLines - 1) * fontSize * 1.2;
+  const descLines = el.description ? estimateLineCount(el.description, charsPerLineSmall) : 0;
+  const descH = descLines > 0 ? badgeFontSize + (descLines - 1) * badgeFontSize * 1.2 : 0;
+
+  // 8px text-padding-top + badge + 4px + name + (6px + desc if present) + 8px bottom
+  const bodyContentH = 8 + badgeFontSize + 4 + nameH + (descH > 0 ? 6 + descH : 0) + 8;
+  return PERSON_BODY_Y + Math.max(bodyContentH, 40);
+}
+
+function estimateNodeHeight(el: ResolvedElement): number {
+  const fontSize = el.style.fontSize;
+  const textWidth = DEFAULT_WIDTH - 16;
+  const badgeFontSize = Math.max(fontSize - 3, 10);
+  const charsPerLineNormal = Math.floor(textWidth / (fontSize * 0.55));
+  const charsPerLineSmall = Math.floor(textWidth / (badgeFontSize * 0.55));
+
+  const nameLines = estimateLineCount(el.name, charsPerLineNormal);
+  const nameH = fontSize + (nameLines - 1) * fontSize * 1.2;
+  const descLines = el.description ? estimateLineCount(el.description, charsPerLineSmall) : 0;
+  const descH = descLines > 0 ? badgeFontSize + (descLines - 1) * badgeFontSize * 1.2 : 0;
+
+  // badge (1 line) + badge-to-name spacing + name + name-to-desc spacing + desc + top/bottom padding
+  return Math.max(20 + badgeFontSize + 4 + nameH + (descH > 0 ? 6 + descH : 0), 80);
+}
 
 export interface LayoutOptions {
   rankDirection?: 'TB' | 'BT' | 'LR' | 'RL';
@@ -45,8 +93,8 @@ export class LayoutEngine {
 
     for (const el of nonBoundary) {
       const [w, h] = el.style.shape === 'Person'
-        ? [PERSON_WIDTH, PERSON_HEIGHT]
-        : [DEFAULT_WIDTH, DEFAULT_HEIGHT];
+        ? [PERSON_WIDTH, estimatePersonHeight(el)]
+        : [DEFAULT_WIDTH, estimateNodeHeight(el)];
       g.setNode(el.id, { width: w, height: h, label: el.name });
     }
 
