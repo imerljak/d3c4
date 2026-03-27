@@ -46,9 +46,25 @@ export default function Structurizr({
     const [mode, setMode] = useState<StructurizrViewMode>(resolvedDefaultMode);
     const [selectedView, setSelectedView] = useState<string | undefined>(defaultView);
     const [codePanelWidthPct, setCodePanelWidthPct] = useState(40);
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
     const isDragging = useRef(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const fullscreenRef = useRef<HTMLDivElement>(null);
+
+    const toggleFullscreen = useCallback(() => {
+        if (!document.fullscreenElement) {
+            fullscreenRef.current?.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    }, []);
+
+    useEffect(() => {
+        const onFullscreenChange = () => setIsFullscreen(!!document.fullscreenElement);
+        document.addEventListener('fullscreenchange', onFullscreenChange);
+        return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+    }, []);
 
     // Parse DSL (memoized)
     const parseResult = useMemo(() => {
@@ -120,7 +136,7 @@ export default function Structurizr({
     if (!workspace) return null;
 
     return (
-        <div className={clsx('structurizr-container', className)}>
+        <div className={clsx('structurizr-container', className)} ref={fullscreenRef}>
             <div className="structurizr-toolbar">
                 <select
                     value={selectedView ?? ''}
@@ -137,6 +153,22 @@ export default function Structurizr({
                 </select>
 
                 <div className="structurizr-toggles">
+                    <button
+                        className="structurizr-btn-icon"
+                        onClick={toggleFullscreen}
+                        title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+                        aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+                    >
+                        {isFullscreen ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>
+                            </svg>
+                        ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+                            </svg>
+                        )}
+                    </button>
                     {allowedEngines.length > 1 && (
                         <select
                             value={engine}
