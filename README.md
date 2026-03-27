@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/imerljak/d3c4/actions/workflows/ci.yml/badge.svg)](https://github.com/imerljak/d3c4/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/@d3c4/core)](https://www.npmjs.com/package/@d3c4/core)
-[![license](https://img.shields.io/github/license/imerljak/d3c4)](./LICENSE)
+[![license](https://img.shields.io/badge/license-Apache%202.0-blue)](./LICENSE)
 
 ---
 
@@ -171,4 +171,4 @@ Releases are fully automated — merging the generated "Version Packages" PR pub
 
 ## License
 
-[MIT](./LICENSE)
+[Apache 2.0](./LICENSE)
