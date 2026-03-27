@@ -1,0 +1,133 @@
+---
+sidebar_position: 2
+sidebar_label: Getting Started
+---
+
+# Getting Started
+
+## Installation
+
+Install the packages you need. `@d3c4/core` requires `d3` and `dagre` as peer dependencies.
+
+```bash
+# Vanilla TypeScript / JavaScript
+npm install @d3c4/core @d3c4/dsl d3 dagre
+
+# React
+npm install @d3c4/react @d3c4/dsl d3 dagre
+
+# Docusaurus
+npm install @d3c4/docusaurus-theme-structurizr
+```
+
+## Vanilla TypeScript
+
+Parse a DSL string and render it into any `HTMLElement`:
+
+```ts
+import { parseDsl } from '@d3c4/dsl';
+import { Renderer } from '@d3c4/core';
+
+const dsl = `
+workspace "Getting Started" {
+  model {
+    user = person "User"
+    app  = softwareSystem "My App"
+    user -> app "Uses"
+  }
+  views {
+    systemContext app "Context" {
+      include *
+      autoLayout TB
+    }
+  }
+}
+`;
+
+const workspace = parseDsl(dsl);
+const container = document.getElementById('diagram')!;
+
+const renderer = new Renderer(container, workspace, {
+  viewKey: 'Context',
+});
+
+renderer.render();
+```
+
+## React
+
+```tsx
+import { parseDsl } from '@d3c4/dsl';
+import { D3C4Diagram } from '@d3c4/react';
+
+const dsl = `
+workspace "Getting Started" {
+  model {
+    user = person "User"
+    app  = softwareSystem "My App"
+    user -> app "Uses"
+  }
+  views {
+    systemContext app "Context" {
+      include *
+      autoLayout TB
+    }
+  }
+}
+`;
+
+export default function App() {
+  const workspace = parseDsl(dsl);
+
+  return (
+    <D3C4Diagram
+      workspace={workspace}
+      viewKey="Context"
+      style={{ height: 400 }}
+    />
+  );
+}
+```
+
+## Docusaurus
+
+Add the theme to `docusaurus.config.ts`:
+
+```ts
+export default {
+  themes: ['@d3c4/docusaurus-theme-structurizr'],
+  presets: [
+    ['classic', {
+      docs: {
+        remarkPlugins: [
+          require('@d3c4/docusaurus-theme-structurizr/remark-plugin'),
+        ],
+      },
+    }],
+  ],
+  themeConfig: {
+    structurizr: {
+      defaultEngine: 'dagre',
+      defaultMode: 'diagram',
+    },
+  },
+};
+```
+
+Then use a fenced code block anywhere in your Markdown or MDX:
+
+````md
+```structurizr
+workspace "Getting Started" {
+  ...
+}
+```
+````
+
+Or import the `<Structurizr>` component directly in MDX:
+
+```mdx
+import Structurizr from '@theme/Structurizr';
+
+<Structurizr dsl={`workspace "..." { ... }`} />
+```
