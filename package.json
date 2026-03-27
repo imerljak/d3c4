@@ -8,14 +8,18 @@
     "dev": "turbo run dev",
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
-    "preview": "turbo run preview"
+    "preview": "turbo run preview",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
-    "turbo": "latest",
+    "@changesets/cli": "^2.30.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "eslint": "^9.0.0",
     "prettier": "^3.0.0",
+    "turbo": "latest",
     "typescript": "^5.5.0"
   }
 }

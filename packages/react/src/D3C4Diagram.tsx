@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { Renderer } from '@d3c4/core';
+import { Renderer, ForceRenderer } from '@d3c4/core';
 import type { RendererOptions } from '@d3c4/core';
 import type { StructurizrWorkspace } from '@d3c4/types';
 
@@ -10,6 +10,8 @@ export interface D3C4DiagramProps extends Omit<RendererOptions, 'viewKey'> {
   viewKey: string;
   className?: string;
   style?: React.CSSProperties;
+  /** The layout engine to use. Defaults to 'dagre'. */
+  engine?: 'dagre' | 'force';
 }
 
 /**
@@ -29,20 +31,31 @@ export function D3C4Diagram({
   viewKey,
   className,
   style,
+  engine = 'dagre',
   onRenderComplete,
   ...options
 }: D3C4DiagramProps): React.JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
-  const rendererRef = useRef<Renderer | null>(null);
+  const rendererRef = useRef<Renderer | ForceRenderer | null>(null);
 
-  // Mount: create Renderer once
+  // Mount: create Renderer (re-run if engine changes)
   useEffect(() => {
     if (!containerRef.current) return;
-    const renderer = new Renderer(containerRef.current, workspace, {
-      ...options,
-      viewKey,
-      onRenderComplete,
-    });
+
+    // Clean up container before making a new renderer
+    containerRef.current.innerHTML = '';
+
+    const renderer = engine === 'force'
+      ? new ForceRenderer(containerRef.current, workspace, {
+        ...options,
+        viewKey,
+      })
+      : new Renderer(containerRef.current, workspace, {
+        ...options,
+        viewKey,
+        onRenderComplete,
+      });
+
     rendererRef.current = renderer;
 
     return () => {
@@ -50,7 +63,7 @@ export function D3C4Diagram({
       rendererRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [engine]);
 
   // When workspace changes, update without re-mounting
   useEffect(() => {
