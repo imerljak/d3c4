@@ -15,21 +15,34 @@ npm install @d3c4/docusaurus-theme-structurizr
 
 ## Setup
 
+The plugin has **two independent pieces** that must both be registered:
+
+| Piece | What it does | Where to register |
+|-------|-------------|-------------------|
+| **Theme** (`themes` array) | Provides the `<Structurizr>` React component at `@theme/Structurizr` | Top-level `themes` array |
+| **Remark plugin** (`remarkPlugins`) | Transforms ` ```structurizr ` fenced code blocks into `<Structurizr>` JSX at build time | Inside each content plugin that processes MDX (`docs`, `blog`, `pages`) |
+
+:::warning Common mistake
+Registering the theme but **forgetting the remark plugin** is the most frequent setup error. The theme alone does nothing to fenced code blocks — diagrams will silently not render. The remark plugin must be added to every content source where you want code-fence support.
+:::
+
 Edit `docusaurus.config.ts`:
 
 ```ts
 import remarkStructurizr from '@d3c4/docusaurus-theme-structurizr/remark-plugin';
 
 export default {
-  // Register the theme (provides <Structurizr> component)
+  // 1. Register the theme — provides the <Structurizr> component
   themes: ['@d3c4/docusaurus-theme-structurizr'],
 
   presets: [
     ['classic', {
       docs: {
-        // Register the remark plugin (transforms ```structurizr code blocks)
+        // 2. Register the remark plugin — transforms ```structurizr code blocks
         remarkPlugins: [remarkStructurizr],
       },
+      // If you also want diagrams in blog posts:
+      // blog: { remarkPlugins: [remarkStructurizr] },
     }],
   ],
 
@@ -42,6 +55,38 @@ export default {
     },
   },
 };
+```
+
+### Using diagrams in `src/pages/`
+
+Standalone pages under `src/pages/` are processed separately from the docs preset. To enable fenced code blocks there too, pass the plugin to the `pages` key:
+
+```ts
+presets: [
+  ['classic', {
+    docs:  { remarkPlugins: [remarkStructurizr] },
+    pages: { remarkPlugins: [remarkStructurizr] },
+  }],
+],
+```
+
+### Using the `<Structurizr>` component without the remark plugin
+
+If you only use the `<Structurizr>` MDX component (no code fences), you only need the theme — the remark plugin is optional:
+
+```ts
+// Minimum setup for MDX component usage only
+export default {
+  themes: ['@d3c4/docusaurus-theme-structurizr'],
+};
+```
+
+Then import and use the component directly in any `.mdx` file:
+
+```mdx
+import Structurizr from '@theme/Structurizr';
+
+<Structurizr dsl={`workspace { ... }`} />
 ```
 
 ## Configuration
