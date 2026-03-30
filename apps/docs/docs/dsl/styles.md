@@ -107,21 +107,48 @@ workspace {
 
 ## Custom tags
 
-:::note
-Custom inline tags on elements and relationships are not yet supported by the d3c4 DSL parser. Only the implicit type-based tags (`Person`, `Software System`, `Container`, `Component`) are available today.
-:::
+You can add extra tags to any element or relationship as a comma-separated string in the 4th positional argument. These tags let you apply fine-grained styles beyond the default type-based tags.
 
-In the full Structurizr DSL, you can add extra tags to any element to apply specific styles:
+### Element tags
 
 ```
-db = softwareSystem "Database" "PostgreSQL" "Database,External"
+db    = softwareSystem "Database" "PostgreSQL" "Database,External"
+cache = softwareSystem "Cache"    "Redis"      "Cache"
 ```
 
-Then target those tags in `styles`:
+### Relationship tags
 
 ```
-element "Database" { shape Cylinder }
-element "External" { background #999999 }
+user -> app "Uses"         "HTTPS" "Sync"
+app  -> db  "Reads/writes" "SQL"   "Async"
 ```
 
-When multiple styles match an element, the last matching definition takes precedence.
+### Targeting custom tags in styles
+
+```structurizr
+workspace {
+  model {
+    user  = person "User"
+    app   = softwareSystem "App"
+    db    = softwareSystem "Database" "PostgreSQL" "Database,External"
+    user -> app "Uses"         "HTTPS" "Sync"
+    app  -> db  "Reads/writes" "SQL"   "Async"
+  }
+  views {
+    systemContext app "Context" {
+      include *
+      autoLayout TB
+    }
+    styles {
+      element "Person"          { shape Person     background #08427b color #ffffff }
+      element "Software System" { shape RoundedBox background #1168bd color #ffffff }
+      element "Database"        { shape Cylinder   background #2a9d8f color #ffffff }
+      element "External"        { background #999999 }
+      relationship "Sync"       { color #000000 thickness 2 dashed false }
+      relationship "Async"      { color #888888 thickness 1 dashed true }
+    }
+  }
+}
+```
+
+When multiple styles match an element or relationship, the last matching definition takes precedence.

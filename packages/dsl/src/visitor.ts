@@ -18,7 +18,6 @@ import type {
     RelationshipStyleContext,
     StringContext,
     IdentifierContext,
-    TagsDefContext,
     ElementStylePropertyContext,
     RelationshipStylePropertyContext,
     AutoLayoutStatementContext,
@@ -91,10 +90,8 @@ export class WorkspaceVisitor
         return ctx.getText();
     }
 
-    private getTags(ctx: TagsDefContext | undefined | null): string | undefined {
-        if (!ctx) return undefined;
-        const strings = ctx.string_();
-        return strings.map((s) => this.getString(s)).join(', ');
+    private getTags(ctx: StringContext | undefined | null): string | undefined {
+        return this.getString(ctx);
     }
 
     visitWorkspace = (ctx: WorkspaceContext): StructurizrWorkspace => {

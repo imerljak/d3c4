@@ -127,4 +127,49 @@ describe('parseDsl', () => {
     const ws = parseDsl(dsl);
     expect(ws.model.people?.[0]?.name).toBe('Alice');
   });
+
+  it('parses custom tags on person', () => {
+    const dsl = `workspace { model { a = person "Alice" "An admin" "Admin,Internal" } views {} }`;
+    const ws = parseDsl(dsl);
+    expect(ws.model.people?.[0]?.tags).toBe('Admin,Internal');
+  });
+
+  it('parses custom tags on softwareSystem', () => {
+    const dsl = `workspace { model {
+      db = softwareSystem "Database" "PostgreSQL" "Database,External"
+    } views {} }`;
+    const ws = parseDsl(dsl);
+    expect(ws.model.softwareSystems?.[0]?.tags).toBe('Database,External');
+  });
+
+  it('parses custom tags on container', () => {
+    const dsl = `workspace { model {
+      sys = softwareSystem "Sys" {
+        cache = container "Cache" "Redis cache" "Redis" "Cache,External"
+      }
+    } views {} }`;
+    const ws = parseDsl(dsl);
+    expect(ws.model.softwareSystems?.[0]?.containers?.[0]?.tags).toBe('Cache,External');
+  });
+
+  it('parses custom tags on relationship', () => {
+    const dsl = `workspace { model {
+      user = person "User"
+      app = softwareSystem "App"
+      user -> app "Uses" "HTTPS" "Sync"
+    } views {} }`;
+    const ws = parseDsl(dsl);
+    const rel = ws.model.relationships?.[0];
+    expect(rel?.description).toBe('Uses');
+    expect(rel?.technology).toBe('HTTPS');
+    expect(rel?.tags).toBe('Sync');
+  });
+
+  it('parses no tags when 4th argument is absent', () => {
+    const dsl = `workspace { model {
+      user = person "User" "A user"
+    } views {} }`;
+    const ws = parseDsl(dsl);
+    expect(ws.model.people?.[0]?.tags).toBeUndefined();
+  });
 });

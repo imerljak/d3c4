@@ -31,11 +31,11 @@ elementAssignment:
     ;
 
 person:
-    PERSON name=string description=string? tags=tagsDef? bodyBlock?
+    PERSON name=string description=string? tags=string? bodyBlock?
     ;
 
 softwareSystem:
-    SOFTWARE_SYSTEM name=string description=string? tags=tagsDef? softwareSystemBody?
+    SOFTWARE_SYSTEM name=string description=string? tags=string? softwareSystemBody?
     ;
 
 softwareSystemBody:
@@ -53,7 +53,7 @@ containerAssignment:
     ;
 
 container:
-    CONTAINER name=string description=string? technology=string? tags=tagsDef? containerBody?
+    CONTAINER name=string description=string? technology=string? tags=string? containerBody?
     ;
 
 containerBody:
@@ -71,7 +71,7 @@ componentAssignment:
     ;
 
 component:
-    COMPONENT name=string description=string? technology=string? tags=tagsDef? bodyBlock?
+    COMPONENT name=string description=string? technology=string? tags=string? bodyBlock?
     ;
 
 bodyBlock:
@@ -79,7 +79,7 @@ bodyBlock:
     ;
 
 relationship:
-    source=identifier ARROW destination=string description=string? technology=string? tags=tagsDef?
+    source=identifier ARROW destination=string description=string? technology=string? tags=string?
     ;
 
 // --- Views ---
