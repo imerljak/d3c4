@@ -95,4 +95,69 @@ describe('WorkspaceParser', () => {
     const container = result.elementMap.get('3');
     expect(container?.style.background).toBe('#438DD5');
   });
+
+  it('applies custom tag styles to elements', () => {
+    const workspace: StructurizrWorkspace = {
+      name: 'Test',
+      model: {
+        people: [],
+        softwareSystems: [
+          {
+            type: 'SoftwareSystem',
+            id: '1',
+            name: 'Database',
+            tags: 'Database,External',
+          },
+        ],
+        relationships: [],
+      },
+      views: {
+        configuration: {
+          styles: {
+            elements: [
+              { tag: 'Database', shape: 'Cylinder', background: '#2a9d8f', color: '#ffffff' },
+              { tag: 'External', background: '#999999' },
+            ],
+            relationships: [],
+          },
+        },
+      },
+    };
+    const parser = new WorkspaceParser();
+    const result = parser.parse(workspace);
+    const db = result.elementMap.get('1');
+    // 'External' style is applied last, so background comes from it
+    expect(db?.style.background).toBe('#999999');
+    expect(db?.style.shape).toBe('Cylinder');
+    expect(db?.style.color).toBe('#ffffff');
+  });
+
+  it('applies custom tag styles to relationships', () => {
+    const workspace: StructurizrWorkspace = {
+      name: 'Test',
+      model: {
+        people: [{ type: 'Person', id: '1', name: 'User' }],
+        softwareSystems: [{ type: 'SoftwareSystem', id: '2', name: 'App' }],
+        relationships: [
+          { id: '3', sourceId: '1', destinationId: '2', description: 'Uses', tags: 'Sync' },
+        ],
+      },
+      views: {
+        configuration: {
+          styles: {
+            elements: [],
+            relationships: [
+              { tag: 'Sync', color: '#000000', thickness: 2, dashed: false },
+            ],
+          },
+        },
+      },
+    };
+    const parser = new WorkspaceParser();
+    const result = parser.parse(workspace);
+    const rel = result.relationshipMap.get('3');
+    expect(rel?.style.color).toBe('#000000');
+    expect(rel?.style.dashed).toBe(false);
+    expect(rel?.style.thickness).toBe(2);
+  });
 });

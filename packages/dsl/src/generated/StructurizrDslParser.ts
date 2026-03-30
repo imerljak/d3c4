@@ -415,14 +415,14 @@ export class StructurizrDslParser extends antlr.Parser {
             }
             this.state = 133;
             this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 3) {
+            switch (this.interpreter.adaptivePredict(this.tokenStream, 8, this.context) ) {
+            case 1:
                 {
                 this.state = 132;
-                localContext._tags = this.tagsDef();
+                localContext._tags = this.string_();
                 }
+                break;
             }
-
             this.state = 136;
             this.errorHandler.sync(this);
             _la = this.tokenStream.LA(1);
@@ -471,14 +471,14 @@ export class StructurizrDslParser extends antlr.Parser {
             }
             this.state = 144;
             this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 3) {
+            switch (this.interpreter.adaptivePredict(this.tokenStream, 11, this.context) ) {
+            case 1:
                 {
                 this.state = 143;
-                localContext._tags = this.tagsDef();
+                localContext._tags = this.string_();
                 }
+                break;
             }
-
             this.state = 147;
             this.errorHandler.sync(this);
             _la = this.tokenStream.LA(1);
@@ -647,14 +647,14 @@ export class StructurizrDslParser extends antlr.Parser {
             }
             this.state = 176;
             this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 3) {
+            switch (this.interpreter.adaptivePredict(this.tokenStream, 17, this.context) ) {
+            case 1:
                 {
                 this.state = 175;
-                localContext._tags = this.tagsDef();
+                localContext._tags = this.string_();
                 }
+                break;
             }
-
             this.state = 179;
             this.errorHandler.sync(this);
             _la = this.tokenStream.LA(1);
@@ -823,14 +823,14 @@ export class StructurizrDslParser extends antlr.Parser {
             }
             this.state = 208;
             this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 3) {
+            switch (this.interpreter.adaptivePredict(this.tokenStream, 23, this.context) ) {
+            case 1:
                 {
                 this.state = 207;
-                localContext._tags = this.tagsDef();
+                localContext._tags = this.string_();
                 }
+                break;
             }
-
             this.state = 211;
             this.errorHandler.sync(this);
             _la = this.tokenStream.LA(1);
@@ -899,7 +899,6 @@ export class StructurizrDslParser extends antlr.Parser {
     public relationship(): RelationshipContext {
         let localContext = new RelationshipContext(this.context, this.state);
         this.enterRule(localContext, 32, StructurizrDslParser.RULE_relationship);
-        let _la: number;
         try {
             this.enterOuterAlt(localContext, 1);
             {
@@ -931,14 +930,14 @@ export class StructurizrDslParser extends antlr.Parser {
             }
             this.state = 232;
             this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 3) {
+            switch (this.interpreter.adaptivePredict(this.tokenStream, 28, this.context) ) {
+            case 1:
                 {
                 this.state = 231;
-                localContext._tags = this.tagsDef();
+                localContext._tags = this.string_();
                 }
+                break;
             }
-
             }
         }
         catch (re) {
@@ -2180,10 +2179,10 @@ export class StructurizrDslParser extends antlr.Parser {
         126,3,28,14,0,125,121,1,0,0,0,125,122,1,0,0,0,125,123,1,0,0,0,125,
         124,1,0,0,0,126,9,1,0,0,0,127,128,5,13,0,0,128,130,3,76,38,0,129,
         131,3,76,38,0,130,129,1,0,0,0,130,131,1,0,0,0,131,133,1,0,0,0,132,
-        134,3,80,40,0,133,132,1,0,0,0,133,134,1,0,0,0,134,136,1,0,0,0,135,
+        134,3,76,38,0,133,132,1,0,0,0,133,134,1,0,0,0,134,136,1,0,0,0,135,
         137,3,30,15,0,136,135,1,0,0,0,136,137,1,0,0,0,137,11,1,0,0,0,138,
         139,5,14,0,0,139,141,3,76,38,0,140,142,3,76,38,0,141,140,1,0,0,0,
-        141,142,1,0,0,0,142,144,1,0,0,0,143,145,3,80,40,0,144,143,1,0,0,
+        141,142,1,0,0,0,142,144,1,0,0,0,143,145,3,76,38,0,144,143,1,0,0,
         0,144,145,1,0,0,0,145,147,1,0,0,0,146,148,3,14,7,0,147,146,1,0,0,
         0,147,148,1,0,0,0,148,13,1,0,0,0,149,153,5,1,0,0,150,152,3,16,8,
         0,151,150,1,0,0,0,152,155,1,0,0,0,153,151,1,0,0,0,153,154,1,0,0,
@@ -2193,7 +2192,7 @@ export class StructurizrDslParser extends antlr.Parser {
         39,0,164,165,5,5,0,0,165,166,3,20,10,0,166,19,1,0,0,0,167,168,5,
         15,0,0,168,170,3,76,38,0,169,171,3,76,38,0,170,169,1,0,0,0,170,171,
         1,0,0,0,171,173,1,0,0,0,172,174,3,76,38,0,173,172,1,0,0,0,173,174,
-        1,0,0,0,174,176,1,0,0,0,175,177,3,80,40,0,176,175,1,0,0,0,176,177,
+        1,0,0,0,174,176,1,0,0,0,175,177,3,76,38,0,176,175,1,0,0,0,176,177,
         1,0,0,0,177,179,1,0,0,0,178,180,3,22,11,0,179,178,1,0,0,0,179,180,
         1,0,0,0,180,21,1,0,0,0,181,185,5,1,0,0,182,184,3,24,12,0,183,182,
         1,0,0,0,184,187,1,0,0,0,185,183,1,0,0,0,185,186,1,0,0,0,186,188,
@@ -2203,14 +2202,14 @@ export class StructurizrDslParser extends antlr.Parser {
         197,5,5,0,0,197,198,3,28,14,0,198,27,1,0,0,0,199,200,5,16,0,0,200,
         202,3,76,38,0,201,203,3,76,38,0,202,201,1,0,0,0,202,203,1,0,0,0,
         203,205,1,0,0,0,204,206,3,76,38,0,205,204,1,0,0,0,205,206,1,0,0,
-        0,206,208,1,0,0,0,207,209,3,80,40,0,208,207,1,0,0,0,208,209,1,0,
+        0,206,208,1,0,0,0,207,209,3,76,38,0,208,207,1,0,0,0,208,209,1,0,
         0,0,209,211,1,0,0,0,210,212,3,30,15,0,211,210,1,0,0,0,211,212,1,
         0,0,0,212,29,1,0,0,0,213,217,5,1,0,0,214,216,3,32,16,0,215,214,1,
         0,0,0,216,219,1,0,0,0,217,215,1,0,0,0,217,218,1,0,0,0,218,220,1,
         0,0,0,219,217,1,0,0,0,220,221,5,2,0,0,221,31,1,0,0,0,222,223,3,78,
         39,0,223,224,5,6,0,0,224,226,3,76,38,0,225,227,3,76,38,0,226,225,
         1,0,0,0,226,227,1,0,0,0,227,229,1,0,0,0,228,230,3,76,38,0,229,228,
-        1,0,0,0,229,230,1,0,0,0,230,232,1,0,0,0,231,233,3,80,40,0,232,231,
+        1,0,0,0,229,230,1,0,0,0,230,232,1,0,0,0,231,233,3,76,38,0,232,231,
         1,0,0,0,232,233,1,0,0,0,233,33,1,0,0,0,234,235,5,12,0,0,235,239,
         5,1,0,0,236,238,3,36,18,0,237,236,1,0,0,0,238,241,1,0,0,0,239,237,
         1,0,0,0,239,240,1,0,0,0,240,242,1,0,0,0,241,239,1,0,0,0,242,243,
@@ -2478,7 +2477,7 @@ export class ElementAssignmentContext extends antlr.ParserRuleContext {
 export class PersonContext extends antlr.ParserRuleContext {
     public _name?: StringContext;
     public _description?: StringContext;
-    public _tags?: TagsDefContext;
+    public _tags?: StringContext;
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
@@ -2497,9 +2496,6 @@ export class PersonContext extends antlr.ParserRuleContext {
     public bodyBlock(): BodyBlockContext | null {
         return this.getRuleContext(0, BodyBlockContext);
     }
-    public tagsDef(): TagsDefContext | null {
-        return this.getRuleContext(0, TagsDefContext);
-    }
     public override get ruleIndex(): number {
         return StructurizrDslParser.RULE_person;
     }
@@ -2516,7 +2512,7 @@ export class PersonContext extends antlr.ParserRuleContext {
 export class SoftwareSystemContext extends antlr.ParserRuleContext {
     public _name?: StringContext;
     public _description?: StringContext;
-    public _tags?: TagsDefContext;
+    public _tags?: StringContext;
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
@@ -2534,9 +2530,6 @@ export class SoftwareSystemContext extends antlr.ParserRuleContext {
     }
     public softwareSystemBody(): SoftwareSystemBodyContext | null {
         return this.getRuleContext(0, SoftwareSystemBodyContext);
-    }
-    public tagsDef(): TagsDefContext | null {
-        return this.getRuleContext(0, TagsDefContext);
     }
     public override get ruleIndex(): number {
         return StructurizrDslParser.RULE_softwareSystem;
@@ -2639,7 +2632,7 @@ export class ContainerContext extends antlr.ParserRuleContext {
     public _name?: StringContext;
     public _description?: StringContext;
     public _technology?: StringContext;
-    public _tags?: TagsDefContext;
+    public _tags?: StringContext;
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
@@ -2657,9 +2650,6 @@ export class ContainerContext extends antlr.ParserRuleContext {
     }
     public containerBody(): ContainerBodyContext | null {
         return this.getRuleContext(0, ContainerBodyContext);
-    }
-    public tagsDef(): TagsDefContext | null {
-        return this.getRuleContext(0, TagsDefContext);
     }
     public override get ruleIndex(): number {
         return StructurizrDslParser.RULE_container;
@@ -2762,7 +2752,7 @@ export class ComponentContext extends antlr.ParserRuleContext {
     public _name?: StringContext;
     public _description?: StringContext;
     public _technology?: StringContext;
-    public _tags?: TagsDefContext;
+    public _tags?: StringContext;
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
@@ -2780,9 +2770,6 @@ export class ComponentContext extends antlr.ParserRuleContext {
     }
     public bodyBlock(): BodyBlockContext | null {
         return this.getRuleContext(0, BodyBlockContext);
-    }
-    public tagsDef(): TagsDefContext | null {
-        return this.getRuleContext(0, TagsDefContext);
     }
     public override get ruleIndex(): number {
         return StructurizrDslParser.RULE_component;
@@ -2834,7 +2821,7 @@ export class RelationshipContext extends antlr.ParserRuleContext {
     public _destination?: StringContext;
     public _description?: StringContext;
     public _technology?: StringContext;
-    public _tags?: TagsDefContext;
+    public _tags?: StringContext;
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
@@ -2852,9 +2839,6 @@ export class RelationshipContext extends antlr.ParserRuleContext {
         }
 
         return this.getRuleContext(i, StringContext);
-    }
-    public tagsDef(): TagsDefContext | null {
-        return this.getRuleContext(0, TagsDefContext);
     }
     public override get ruleIndex(): number {
         return StructurizrDslParser.RULE_relationship;
