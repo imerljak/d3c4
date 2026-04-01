@@ -4,7 +4,10 @@ export type ViewType =
   | 'Container'
   | 'Component'
   | 'Deployment'
-  | 'Dynamic';
+  | 'Dynamic'
+  | 'Filtered'
+  | 'Image'
+  | 'Custom';
 
 export interface ElementView {
   readonly id: string;
@@ -76,10 +79,30 @@ export interface DynamicView extends BaseView {
   readonly elementId?: string;
 }
 
+export interface FilteredView extends BaseView {
+  readonly type: 'Filtered';
+  readonly baseViewKey: string;
+  readonly mode: 'Include' | 'Exclude';
+  readonly tags: string[];
+}
+
+export interface ImageView extends BaseView {
+  readonly type: 'Image';
+  readonly elementId?: string;
+  readonly image?: string;
+}
+
+export interface CustomView extends BaseView {
+  readonly type: 'Custom';
+}
+
 export type DiagramView =
   | SystemLandscapeView
   | SystemContextView
   | ContainerView
   | ComponentView
   | DeploymentView
-  | DynamicView;
+  | DynamicView
+  | FilteredView
+  | ImageView
+  | CustomView;

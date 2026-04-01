@@ -5,12 +5,24 @@ grammar StructurizrDsl;
 // ========================================================== //
 
 workspace:
-    WORKSPACE name=string? description=string? LBRACE workspaceBody* RBRACE EOF
+    WORKSPACE (EXTENDS extendsUrl=string)? name=string? description=string? LBRACE workspaceBody* RBRACE EOF
     ;
 
 workspaceBody:
     model
     | views
+    | directive
+    ;
+
+directive:
+    BANG_INCLUDE path=string                                    # includeDirective
+    | BANG_IDENTIFIERS scope=identifier                         # identifiersDirective
+    | BANG_CONST name=identifier value=string                   # constDirective
+    | BANG_VAR name=identifier value=string                     # varDirective
+    | BANG_IMPLIED_RELATIONSHIPS enabled=string                 # impliedRelationshipsDirective
+    | BANG_DOCS path=string                                     # docsDirective
+    | BANG_ADRS path=string                                     # adrsDirective
+    | BANG_REF ref=string                                       # refDirective
     ;
 
 // --- Model ---
@@ -24,10 +36,24 @@ modelBody:
     | softwareSystem
     | relationship
     | elementAssignment
+    | group
+    | deploymentEnvironment
     ;
 
 elementAssignment:
     identifier EQUALS (person | softwareSystem | container | component)
+    ;
+
+group:
+    GROUP name=string LBRACE groupModelBody* RBRACE
+    ;
+
+groupModelBody:
+    person
+    | softwareSystem
+    | relationship
+    | elementAssignment
+    | group
     ;
 
 person:
@@ -46,6 +72,8 @@ softwareSystemStatement:
     container
     | relationship
     | containerAssignment
+    | group
+    | bodyStatement
     ;
 
 containerAssignment:
@@ -64,6 +92,8 @@ containerStatement:
     component
     | relationship
     | componentAssignment
+    | group
+    | bodyStatement
     ;
 
 componentAssignment:
@@ -75,11 +105,80 @@ component:
     ;
 
 bodyBlock:
-    LBRACE relationship* RBRACE
+    LBRACE bodyStatement* RBRACE
+    ;
+
+bodyStatement:
+    relationship
+    | urlStatement
+    | tagsStatement
+    | propertiesStatement
+    | perspectivesStatement
+    ;
+
+urlStatement:
+    URL value=string SEMICOLON?
+    ;
+
+tagsStatement:
+    TAGS string+ SEMICOLON?
+    ;
+
+propertiesStatement:
+    PROPERTIES LBRACE propertyEntry* RBRACE
+    ;
+
+propertyEntry:
+    key=string value=string SEMICOLON?
+    ;
+
+perspectivesStatement:
+    PERSPECTIVES LBRACE perspectiveEntry* RBRACE
+    ;
+
+perspectiveEntry:
+    name=string description=string SEMICOLON?
     ;
 
 relationship:
     source=identifier ARROW destination=string description=string? technology=string? tags=string?
+    ;
+
+// --- Deployment ---
+
+deploymentEnvironment:
+    DEPLOYMENT_ENVIRONMENT name=string LBRACE deploymentNodeStatement* RBRACE
+    ;
+
+deploymentNodeStatement:
+    deploymentNode
+    | infrastructureNode
+    | softwareSystemInstance
+    | containerInstance
+    | deploymentNodeAssignment
+    | relationship
+    ;
+
+deploymentNodeAssignment:
+    identifier EQUALS deploymentNode
+    ;
+
+deploymentNode:
+    DEPLOYMENT_NODE name=string description=string? technology=string? tags=string?
+    LBRACE deploymentNodeStatement* RBRACE
+    ;
+
+infrastructureNode:
+    INFRASTRUCTURE_NODE name=string description=string? technology=string? tags=string?
+    bodyBlock?
+    ;
+
+softwareSystemInstance:
+    SOFTWARE_SYSTEM_INSTANCE ref=identifier instanceId=string? tags=string? bodyBlock?
+    ;
+
+containerInstance:
+    CONTAINER_INSTANCE ref=identifier instanceId=string? tags=string? bodyBlock?
     ;
 
 // --- Views ---
@@ -93,7 +192,17 @@ viewsBody:
     | systemContextView
     | containerView
     | componentView
+    | dynamicView
+    | deploymentView
+    | filteredView
+    | imageView
+    | customView
     | styles
+    | themeStatement
+    | themesStatement
+    | brandingBlock
+    | terminologyBlock
+    | configurationBlock
     ;
 
 systemLandscapeView:
@@ -112,6 +221,31 @@ componentView:
     COMPONENT containerIdentifier=identifier key=string? description=string? viewBody
     ;
 
+dynamicView:
+    DYNAMIC elementRef=identifier? key=string? description=string? viewBody
+    ;
+
+deploymentView:
+    DEPLOYMENT elementRef=identifier? environment=string? key=string? description=string? viewBody
+    ;
+
+filteredView:
+    FILTERED baseKey=string filterMode=identifier filterTags=string key=string? description=string? viewBody?
+    ;
+
+imageView:
+    IMAGE elementRef=identifier key=string? LBRACE imageViewStatement* RBRACE
+    ;
+
+imageViewStatement:
+    (TITLE | DESCRIPTION) value=string SEMICOLON?
+    | IMAGE value=string SEMICOLON?
+    ;
+
+customView:
+    CUSTOM key=string? description=string? viewBody
+    ;
+
 viewBody:
     LBRACE viewStatement* RBRACE
     ;
@@ -126,11 +260,16 @@ viewStatement:
     ;
 
 includeStatement:
-    INCLUDE identifier (identifier)*
+    INCLUDE includeTarget (includeTarget)*
     ;
 
 excludeStatement:
-    EXCLUDE identifier (identifier)*
+    EXCLUDE includeTarget (includeTarget)*
+    ;
+
+includeTarget:
+    identifier
+    | string
     ;
 
 autoLayoutStatement:
@@ -147,6 +286,41 @@ descriptionStatement:
 
 animationStatement:
     ANIMATION LBRACE identifier* RBRACE
+    ;
+
+// --- Views Configuration ---
+
+themeStatement:
+    THEME url=string SEMICOLON?
+    ;
+
+themesStatement:
+    THEMES string+ SEMICOLON?
+    ;
+
+brandingBlock:
+    BRANDING LBRACE brandingStatement* RBRACE
+    ;
+
+brandingStatement:
+    LOGO value=string SEMICOLON?
+    | FONT value=string SEMICOLON?
+    ;
+
+terminologyBlock:
+    TERMINOLOGY LBRACE terminologyEntry* RBRACE
+    ;
+
+terminologyEntry:
+    key=identifier value=string SEMICOLON?
+    ;
+
+configurationBlock:
+    CONFIGURATION LBRACE configurationEntry* RBRACE
+    ;
+
+configurationEntry:
+    (SCOPE | VISIBILITY) value=string SEMICOLON?
     ;
 
 // --- Styles ---
@@ -173,6 +347,12 @@ elementStyleProperty:
     | FONT_SIZE size=string
     | BORDER border=string
     | OPACITY opacity=string
+    | ICON icon=string
+    | WIDTH width=string
+    | HEIGHT height=string
+    | STROKE_WIDTH strokeWidth=string
+    | ICON_POSITION iconPosition=string
+    | METADATA metadata=string
     | unknownProperty
     ) SEMICOLON?
     ;
@@ -188,6 +368,10 @@ relationshipStyleProperty:
     | DASHED dashed=string
     | ROUTING routing=string
     | FONT_SIZE size=string
+    | STYLE_PROP style=string
+    | POSITION position=string
+    | OPACITY opacity=string
+    | WIDTH width=string
     | unknownProperty
     ) SEMICOLON?
     ;
@@ -207,6 +391,56 @@ string:
 identifier:
     IDENTIFIER
     | ASTERISK
+    | GROUP
+    | EXTENDS
+    | DYNAMIC
+    | DEPLOYMENT
+    | DEPLOYMENT_ENVIRONMENT
+    | DEPLOYMENT_NODE
+    | INFRASTRUCTURE_NODE
+    | FILTERED
+    | IMAGE
+    | CUSTOM
+    | INCLUDE
+    | EXCLUDE
+    | THEME
+    | THEMES
+    | BRANDING
+    | LOGO
+    | FONT
+    | TERMINOLOGY
+    | CONFIGURATION
+    | SCOPE
+    | VISIBILITY
+    | URL
+    | TAGS
+    | PROPERTIES
+    | PERSPECTIVES
+    | PERSON
+    | SOFTWARE_SYSTEM
+    | CONTAINER
+    | COMPONENT
+    | RELATIONSHIP
+    | ELEMENT
+    | STYLE_PROP
+    | POSITION
+    | METADATA
+    | ICON
+    | WIDTH
+    | HEIGHT
+    | STROKE_WIDTH
+    | ICON_POSITION
+    | OPACITY
+    | BORDER
+    | BACKGROUND
+    | COLOR
+    | COLOUR
+    | STROKE
+    | SHAPE
+    | DASHED
+    | ROUTING
+    | THICKNESS
+    | FONT_SIZE
     ;
 
 tagsDef:
@@ -228,38 +462,86 @@ ASTERISK    : '*' ;
 SEMICOLON   : ';' ;
 COMMA       : ',' ;
 
+// Directives (must come before IDENTIFIER to take priority)
+BANG_INCLUDE                : '!include' ;
+BANG_IDENTIFIERS            : '!identifiers' ;
+BANG_CONST                  : '!const' ;
+BANG_VAR                    : '!var' ;
+BANG_IMPLIED_RELATIONSHIPS  : '!impliedRelationships' ;
+BANG_DOCS                   : '!docs' ;
+BANG_ADRS                   : '!adrs' ;
+BANG_REF                    : '!ref' ;
+
 // Keywords
-WORKSPACE       : 'workspace' ;
-MODEL           : 'model' ;
-VIEWS           : 'views' ;
-PERSON          : 'person' ;
-SOFTWARE_SYSTEM : 'softwareSystem' ;
-CONTAINER       : 'container' ;
-COMPONENT       : 'component' ;
-SYSTEM_LANDSCAPE: 'systemLandscape' ;
-SYSTEM_CONTEXT  : 'systemContext' ;
-STYLES          : 'styles' ;
-ELEMENT         : 'element' ;
-RELATIONSHIP    : 'relationship' ;
-INCLUDE         : 'include' ;
-EXCLUDE         : 'exclude' ;
-AUTO_LAYOUT     : 'autoLayout' ;
-TITLE           : 'title' ;
-DESCRIPTION     : 'description' ;
-ANIMATION       : 'animation' ;
+WORKSPACE               : 'workspace' ;
+EXTENDS                 : 'extends' ;
+MODEL                   : 'model' ;
+VIEWS                   : 'views' ;
+PERSON                  : 'person' ;
+SOFTWARE_SYSTEM         : 'softwareSystem' ;
+CONTAINER               : 'container' ;
+COMPONENT               : 'component' ;
+GROUP                   : 'group' ;
+SYSTEM_LANDSCAPE        : 'systemLandscape' ;
+SYSTEM_CONTEXT          : 'systemContext' ;
+DYNAMIC                 : 'dynamic' ;
+DEPLOYMENT              : 'deployment' ;
+FILTERED                : 'filtered' ;
+IMAGE                   : 'image' ;
+CUSTOM                  : 'custom' ;
+DEPLOYMENT_ENVIRONMENT  : 'deploymentEnvironment' ;
+DEPLOYMENT_NODE         : 'deploymentNode' ;
+INFRASTRUCTURE_NODE     : 'infrastructureNode' ;
+SOFTWARE_SYSTEM_INSTANCE: 'softwareSystemInstance' ;
+CONTAINER_INSTANCE      : 'containerInstance' ;
+DEPLOYMENT_GROUP        : 'deploymentGroup' ;
+STYLES                  : 'styles' ;
+ELEMENT                 : 'element' ;
+RELATIONSHIP            : 'relationship' ;
+INCLUDE                 : 'include' ;
+EXCLUDE                 : 'exclude' ;
+AUTO_LAYOUT             : 'autoLayout' ;
+TITLE                   : 'title' ;
+DESCRIPTION             : 'description' ;
+ANIMATION               : 'animation' ;
+
+// Body block keywords
+URL                     : 'url' ;
+TAGS                    : 'tags' ;
+PROPERTIES              : 'properties' ;
+PERSPECTIVES            : 'perspectives' ;
 
 // Style properties
-BACKGROUND      : 'background' ;
-COLOR           : 'color' ;
-COLOUR          : 'colour' ;
-STROKE          : 'stroke' ;
-SHAPE           : 'shape' ;
-FONT_SIZE       : 'fontSize' ;
-BORDER          : 'border' ;
-OPACITY         : 'opacity' ;
-THICKNESS       : 'thickness' ;
-DASHED          : 'dashed' ;
-ROUTING         : 'routing' ;
+BACKGROUND              : 'background' ;
+COLOR                   : 'color' ;
+COLOUR                  : 'colour' ;
+STROKE                  : 'stroke' ;
+SHAPE                   : 'shape' ;
+FONT_SIZE               : 'fontSize' ;
+BORDER                  : 'border' ;
+OPACITY                 : 'opacity' ;
+THICKNESS               : 'thickness' ;
+DASHED                  : 'dashed' ;
+ROUTING                 : 'routing' ;
+ICON                    : 'icon' ;
+WIDTH                   : 'width' ;
+HEIGHT                  : 'height' ;
+STROKE_WIDTH            : 'strokeWidth' ;
+ICON_POSITION           : 'iconPosition' ;
+METADATA                : 'metadata' ;
+STYLE_PROP              : 'style' ;
+POSITION                : 'position' ;
+
+// Configuration / views keywords
+THEME                   : 'theme' ;
+THEMES                  : 'themes' ;
+BRANDING                : 'branding' ;
+LOGO                    : 'logo' ;
+FONT                    : 'font' ;
+TERMINOLOGY             : 'terminology' ;
+CONFIGURATION           : 'configuration' ;
+SCOPE                   : 'scope' ;
+VISIBILITY              : 'visibility' ;
 
 // Literals
 HASH_COLOR      : '#' [0-9a-fA-F]+ ;

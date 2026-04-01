@@ -4,9 +4,19 @@ import { AbstractParseTreeVisitor } from "antlr4ng";
 
 import { WorkspaceContext } from "./StructurizrDslParser.js";
 import { WorkspaceBodyContext } from "./StructurizrDslParser.js";
+import { IncludeDirectiveContext } from "./StructurizrDslParser.js";
+import { IdentifiersDirectiveContext } from "./StructurizrDslParser.js";
+import { ConstDirectiveContext } from "./StructurizrDslParser.js";
+import { VarDirectiveContext } from "./StructurizrDslParser.js";
+import { ImpliedRelationshipsDirectiveContext } from "./StructurizrDslParser.js";
+import { DocsDirectiveContext } from "./StructurizrDslParser.js";
+import { AdrsDirectiveContext } from "./StructurizrDslParser.js";
+import { RefDirectiveContext } from "./StructurizrDslParser.js";
 import { ModelContext } from "./StructurizrDslParser.js";
 import { ModelBodyContext } from "./StructurizrDslParser.js";
 import { ElementAssignmentContext } from "./StructurizrDslParser.js";
+import { GroupContext } from "./StructurizrDslParser.js";
+import { GroupModelBodyContext } from "./StructurizrDslParser.js";
 import { PersonContext } from "./StructurizrDslParser.js";
 import { SoftwareSystemContext } from "./StructurizrDslParser.js";
 import { SoftwareSystemBodyContext } from "./StructurizrDslParser.js";
@@ -18,21 +28,50 @@ import { ContainerStatementContext } from "./StructurizrDslParser.js";
 import { ComponentAssignmentContext } from "./StructurizrDslParser.js";
 import { ComponentContext } from "./StructurizrDslParser.js";
 import { BodyBlockContext } from "./StructurizrDslParser.js";
+import { BodyStatementContext } from "./StructurizrDslParser.js";
+import { UrlStatementContext } from "./StructurizrDslParser.js";
+import { TagsStatementContext } from "./StructurizrDslParser.js";
+import { PropertiesStatementContext } from "./StructurizrDslParser.js";
+import { PropertyEntryContext } from "./StructurizrDslParser.js";
+import { PerspectivesStatementContext } from "./StructurizrDslParser.js";
+import { PerspectiveEntryContext } from "./StructurizrDslParser.js";
 import { RelationshipContext } from "./StructurizrDslParser.js";
+import { DeploymentEnvironmentContext } from "./StructurizrDslParser.js";
+import { DeploymentNodeStatementContext } from "./StructurizrDslParser.js";
+import { DeploymentNodeAssignmentContext } from "./StructurizrDslParser.js";
+import { DeploymentNodeContext } from "./StructurizrDslParser.js";
+import { InfrastructureNodeContext } from "./StructurizrDslParser.js";
+import { SoftwareSystemInstanceContext } from "./StructurizrDslParser.js";
+import { ContainerInstanceContext } from "./StructurizrDslParser.js";
 import { ViewsContext } from "./StructurizrDslParser.js";
 import { ViewsBodyContext } from "./StructurizrDslParser.js";
 import { SystemLandscapeViewContext } from "./StructurizrDslParser.js";
 import { SystemContextViewContext } from "./StructurizrDslParser.js";
 import { ContainerViewContext } from "./StructurizrDslParser.js";
 import { ComponentViewContext } from "./StructurizrDslParser.js";
+import { DynamicViewContext } from "./StructurizrDslParser.js";
+import { DeploymentViewContext } from "./StructurizrDslParser.js";
+import { FilteredViewContext } from "./StructurizrDslParser.js";
+import { ImageViewContext } from "./StructurizrDslParser.js";
+import { ImageViewStatementContext } from "./StructurizrDslParser.js";
+import { CustomViewContext } from "./StructurizrDslParser.js";
 import { ViewBodyContext } from "./StructurizrDslParser.js";
 import { ViewStatementContext } from "./StructurizrDslParser.js";
 import { IncludeStatementContext } from "./StructurizrDslParser.js";
 import { ExcludeStatementContext } from "./StructurizrDslParser.js";
+import { IncludeTargetContext } from "./StructurizrDslParser.js";
 import { AutoLayoutStatementContext } from "./StructurizrDslParser.js";
 import { TitleStatementContext } from "./StructurizrDslParser.js";
 import { DescriptionStatementContext } from "./StructurizrDslParser.js";
 import { AnimationStatementContext } from "./StructurizrDslParser.js";
+import { ThemeStatementContext } from "./StructurizrDslParser.js";
+import { ThemesStatementContext } from "./StructurizrDslParser.js";
+import { BrandingBlockContext } from "./StructurizrDslParser.js";
+import { BrandingStatementContext } from "./StructurizrDslParser.js";
+import { TerminologyBlockContext } from "./StructurizrDslParser.js";
+import { TerminologyEntryContext } from "./StructurizrDslParser.js";
+import { ConfigurationBlockContext } from "./StructurizrDslParser.js";
+import { ConfigurationEntryContext } from "./StructurizrDslParser.js";
 import { StylesContext } from "./StructurizrDslParser.js";
 import { StylesBodyContext } from "./StructurizrDslParser.js";
 import { ElementStyleContext } from "./StructurizrDslParser.js";
@@ -66,6 +105,62 @@ export class StructurizrDslVisitor<Result> extends AbstractParseTreeVisitor<Resu
      */
     visitWorkspaceBody?: (ctx: WorkspaceBodyContext) => Result;
     /**
+     * Visit a parse tree produced by the `includeDirective`
+     * labeled alternative in `StructurizrDslParser.directive`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitIncludeDirective?: (ctx: IncludeDirectiveContext) => Result;
+    /**
+     * Visit a parse tree produced by the `identifiersDirective`
+     * labeled alternative in `StructurizrDslParser.directive`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitIdentifiersDirective?: (ctx: IdentifiersDirectiveContext) => Result;
+    /**
+     * Visit a parse tree produced by the `constDirective`
+     * labeled alternative in `StructurizrDslParser.directive`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitConstDirective?: (ctx: ConstDirectiveContext) => Result;
+    /**
+     * Visit a parse tree produced by the `varDirective`
+     * labeled alternative in `StructurizrDslParser.directive`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitVarDirective?: (ctx: VarDirectiveContext) => Result;
+    /**
+     * Visit a parse tree produced by the `impliedRelationshipsDirective`
+     * labeled alternative in `StructurizrDslParser.directive`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitImpliedRelationshipsDirective?: (ctx: ImpliedRelationshipsDirectiveContext) => Result;
+    /**
+     * Visit a parse tree produced by the `docsDirective`
+     * labeled alternative in `StructurizrDslParser.directive`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitDocsDirective?: (ctx: DocsDirectiveContext) => Result;
+    /**
+     * Visit a parse tree produced by the `adrsDirective`
+     * labeled alternative in `StructurizrDslParser.directive`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitAdrsDirective?: (ctx: AdrsDirectiveContext) => Result;
+    /**
+     * Visit a parse tree produced by the `refDirective`
+     * labeled alternative in `StructurizrDslParser.directive`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitRefDirective?: (ctx: RefDirectiveContext) => Result;
+    /**
      * Visit a parse tree produced by `StructurizrDslParser.model`.
      * @param ctx the parse tree
      * @return the visitor result
@@ -83,6 +178,18 @@ export class StructurizrDslVisitor<Result> extends AbstractParseTreeVisitor<Resu
      * @return the visitor result
      */
     visitElementAssignment?: (ctx: ElementAssignmentContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.group`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitGroup?: (ctx: GroupContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.groupModelBody`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitGroupModelBody?: (ctx: GroupModelBodyContext) => Result;
     /**
      * Visit a parse tree produced by `StructurizrDslParser.person`.
      * @param ctx the parse tree
@@ -150,11 +257,95 @@ export class StructurizrDslVisitor<Result> extends AbstractParseTreeVisitor<Resu
      */
     visitBodyBlock?: (ctx: BodyBlockContext) => Result;
     /**
+     * Visit a parse tree produced by `StructurizrDslParser.bodyStatement`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitBodyStatement?: (ctx: BodyStatementContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.urlStatement`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitUrlStatement?: (ctx: UrlStatementContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.tagsStatement`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitTagsStatement?: (ctx: TagsStatementContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.propertiesStatement`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitPropertiesStatement?: (ctx: PropertiesStatementContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.propertyEntry`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitPropertyEntry?: (ctx: PropertyEntryContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.perspectivesStatement`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitPerspectivesStatement?: (ctx: PerspectivesStatementContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.perspectiveEntry`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitPerspectiveEntry?: (ctx: PerspectiveEntryContext) => Result;
+    /**
      * Visit a parse tree produced by `StructurizrDslParser.relationship`.
      * @param ctx the parse tree
      * @return the visitor result
      */
     visitRelationship?: (ctx: RelationshipContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.deploymentEnvironment`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitDeploymentEnvironment?: (ctx: DeploymentEnvironmentContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.deploymentNodeStatement`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitDeploymentNodeStatement?: (ctx: DeploymentNodeStatementContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.deploymentNodeAssignment`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitDeploymentNodeAssignment?: (ctx: DeploymentNodeAssignmentContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.deploymentNode`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitDeploymentNode?: (ctx: DeploymentNodeContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.infrastructureNode`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitInfrastructureNode?: (ctx: InfrastructureNodeContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.softwareSystemInstance`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitSoftwareSystemInstance?: (ctx: SoftwareSystemInstanceContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.containerInstance`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitContainerInstance?: (ctx: ContainerInstanceContext) => Result;
     /**
      * Visit a parse tree produced by `StructurizrDslParser.views`.
      * @param ctx the parse tree
@@ -192,6 +383,42 @@ export class StructurizrDslVisitor<Result> extends AbstractParseTreeVisitor<Resu
      */
     visitComponentView?: (ctx: ComponentViewContext) => Result;
     /**
+     * Visit a parse tree produced by `StructurizrDslParser.dynamicView`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitDynamicView?: (ctx: DynamicViewContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.deploymentView`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitDeploymentView?: (ctx: DeploymentViewContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.filteredView`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitFilteredView?: (ctx: FilteredViewContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.imageView`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitImageView?: (ctx: ImageViewContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.imageViewStatement`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitImageViewStatement?: (ctx: ImageViewStatementContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.customView`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitCustomView?: (ctx: CustomViewContext) => Result;
+    /**
      * Visit a parse tree produced by `StructurizrDslParser.viewBody`.
      * @param ctx the parse tree
      * @return the visitor result
@@ -216,6 +443,12 @@ export class StructurizrDslVisitor<Result> extends AbstractParseTreeVisitor<Resu
      */
     visitExcludeStatement?: (ctx: ExcludeStatementContext) => Result;
     /**
+     * Visit a parse tree produced by `StructurizrDslParser.includeTarget`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitIncludeTarget?: (ctx: IncludeTargetContext) => Result;
+    /**
      * Visit a parse tree produced by `StructurizrDslParser.autoLayoutStatement`.
      * @param ctx the parse tree
      * @return the visitor result
@@ -239,6 +472,54 @@ export class StructurizrDslVisitor<Result> extends AbstractParseTreeVisitor<Resu
      * @return the visitor result
      */
     visitAnimationStatement?: (ctx: AnimationStatementContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.themeStatement`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitThemeStatement?: (ctx: ThemeStatementContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.themesStatement`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitThemesStatement?: (ctx: ThemesStatementContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.brandingBlock`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitBrandingBlock?: (ctx: BrandingBlockContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.brandingStatement`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitBrandingStatement?: (ctx: BrandingStatementContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.terminologyBlock`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitTerminologyBlock?: (ctx: TerminologyBlockContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.terminologyEntry`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitTerminologyEntry?: (ctx: TerminologyEntryContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.configurationBlock`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitConfigurationBlock?: (ctx: ConfigurationBlockContext) => Result;
+    /**
+     * Visit a parse tree produced by `StructurizrDslParser.configurationEntry`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitConfigurationEntry?: (ctx: ConfigurationEntryContext) => Result;
     /**
      * Visit a parse tree produced by `StructurizrDslParser.styles`.
      * @param ctx the parse tree
