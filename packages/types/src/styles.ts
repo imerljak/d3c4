@@ -23,6 +23,10 @@ export interface ElementStyle {
   readonly stroke?: string;
   readonly shape?: Shape;
   readonly icon?: string;
+  readonly width?: number;
+  readonly height?: number;
+  readonly strokeWidth?: number;
+  readonly iconPosition?: string;
   readonly fontSize?: number;
   readonly border?: 'Solid' | 'Dashed' | 'Dotted';
   readonly opacity?: number;

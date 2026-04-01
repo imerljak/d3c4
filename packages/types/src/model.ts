@@ -11,8 +11,11 @@ export interface BaseElement {
   readonly name: string;
   readonly description?: string;
   readonly tags?: string;
+  readonly url?: string;
   readonly properties?: Record<string, string>;
+  readonly perspectives?: Record<string, string>;
   readonly relationships?: Relationship[];
+  readonly group?: string;
 }
 
 export interface Person extends BaseElement {
@@ -79,6 +82,11 @@ export interface Relationship {
   readonly tags?: string;
   readonly properties?: Record<string, string>;
   readonly order?: string;
+}
+
+export interface DeploymentEnvironment {
+  readonly name: string;
+  readonly deploymentNodes: DeploymentNode[];
 }
 
 export type ModelElement =
