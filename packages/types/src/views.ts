@@ -79,21 +79,16 @@ export interface DynamicView extends BaseView {
   readonly elementId?: string;
 }
 
-export interface FilteredView {
+export interface FilteredView extends BaseView {
   readonly type: 'Filtered';
-  readonly key: string;
   readonly baseViewKey: string;
   readonly mode: 'Include' | 'Exclude';
   readonly tags: string[];
-  readonly title?: string;
-  readonly description?: string;
 }
 
-export interface ImageView {
+export interface ImageView extends BaseView {
   readonly type: 'Image';
-  readonly key: string;
   readonly elementId?: string;
-  readonly title?: string;
   readonly image?: string;
 }
 
