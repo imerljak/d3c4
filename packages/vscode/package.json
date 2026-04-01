@@ -36,12 +36,53 @@
         "configuration": "./language-configuration.json"
       }
     ],
+    "grammars": [
+      {
+        "language": "structurizr",
+        "scopeName": "source.structurizr",
+        "path": "./syntaxes/structurizr.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "structurizr",
+        "path": "./snippets/structurizr.code-snippets"
+      }
+    ],
     "commands": [
       {
         "command": "d3c4.helloWorld",
         "title": "d3c4: Hello World"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "d3c4",
+      "properties": {
+        "d3c4.preview.updateMode": {
+          "type": "string",
+          "enum": ["onSave", "onType"],
+          "default": "onSave",
+          "description": "When to update the diagram preview: on every file save, or live on each keystroke."
+        },
+        "d3c4.preview.debounceDelay": {
+          "type": "number",
+          "default": 300,
+          "minimum": 0,
+          "description": "Debounce delay in milliseconds used when `d3c4.preview.updateMode` is `onType`."
+        },
+        "d3c4.preview.defaultView": {
+          "type": "string",
+          "default": "first",
+          "description": "Key of the view to show by default in the preview panel. Use `\"first\"` to always show the first view defined in the DSL."
+        },
+        "d3c4.export.pngScale": {
+          "type": "number",
+          "default": 2,
+          "minimum": 1,
+          "description": "Scale factor for PNG export resolution (e.g. `2` produces a 2× image)."
+        }
+      }
+    }
   },
   "scripts": {
     "build": "vite build",
