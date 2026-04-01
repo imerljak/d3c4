@@ -1,6 +1,7 @@
 src/**
 node_modules/**
 vite.config.ts
+vite.webview.config.ts
 tsconfig.json
 .gitignore
 **/*.map

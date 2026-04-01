@@ -5,7 +5,7 @@ const STRUCTURIZR_LANGUAGE = "structurizr";
 
 let diagnosticCollection: vscode.DiagnosticCollection | undefined;
 
-const pendingValidations = new Map<string, number>();
+const pendingValidations = new Map<string, ReturnType<typeof setTimeout>>();
 
 function validate(document: vscode.TextDocument): void {
   if (document.languageId !== STRUCTURIZR_LANGUAGE) return;

@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
+import { builtinModules } from "module";
 
 export default defineConfig({
   build: {
@@ -9,7 +10,8 @@ export default defineConfig({
       fileName: () => "extension.js",
     },
     rollupOptions: {
-      external: ["vscode"],
+      // Externalize vscode and all Node.js built-ins — provided by the host
+      external: ["vscode", ...builtinModules],
     },
     sourcemap: true,
     minify: false,

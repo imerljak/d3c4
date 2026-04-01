@@ -53,8 +53,22 @@
       {
         "command": "d3c4.helloWorld",
         "title": "d3c4: Hello World"
+      },
+      {
+        "command": "d3c4.openPreview",
+        "title": "d3c4: Open Preview to the Side",
+        "icon": "$(open-preview)"
       }
     ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "d3c4.openPreview",
+          "when": "resourceLangId == structurizr",
+          "group": "navigation"
+        }
+      ]
+    },
     "configuration": {
       "title": "d3c4",
       "properties": {
@@ -85,13 +99,15 @@
     }
   },
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && vite build --config vite.webview.config.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@d3c4/core": "workspace:*",
     "@d3c4/dsl": "workspace:*"
   },
   "devDependencies": {
+    "@types/node": "^20.0.0",
     "@types/vscode": "^1.85.0",
     "typescript": "^5.5.0",
     "vite": "^5.0.0"
