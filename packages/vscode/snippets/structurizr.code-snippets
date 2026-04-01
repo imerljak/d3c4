@@ -1,0 +1,99 @@
+{
+  "Workspace": {
+    "prefix": "workspace",
+    "body": [
+      "workspace \"${1:Name}\" \"${2:Description}\" {",
+      "\tmodel {",
+      "\t\t${3:user} = person \"${4:User}\" \"${5:A user of the system}\"",
+      "\t\t${6:system} = softwareSystem \"${7:System}\" \"${8:The main system}\" {",
+      "\t\t\t$0",
+      "\t\t}",
+      "\t\t${3} -> ${6} \"${9:Uses}\"",
+      "\t}",
+      "",
+      "\tviews {",
+      "\t\tsystemContext ${6} \"SystemContext\" {",
+      "\t\t\tinclude *",
+      "\t\t\tautoLayout",
+      "\t\t}",
+      "\t}",
+      "}"
+    ],
+    "description": "Scaffold a full workspace with model and views"
+  },
+  "Person": {
+    "prefix": "person",
+    "body": ["${1:identifier} = person \"${2:Name}\" \"${3:Description}\""],
+    "description": "Declare a person element"
+  },
+  "Software System": {
+    "prefix": "softwareSystem",
+    "body": [
+      "${1:identifier} = softwareSystem \"${2:Name}\" \"${3:Description}\" {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Declare a software system element"
+  },
+  "Container": {
+    "prefix": "container",
+    "body": [
+      "${1:identifier} = container \"${2:Name}\" \"${3:Description}\" \"${4:Technology}\" {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Declare a container element"
+  },
+  "Component": {
+    "prefix": "component",
+    "body": [
+      "${1:identifier} = component \"${2:Name}\" \"${3:Description}\" \"${4:Technology}\""
+    ],
+    "description": "Declare a component element"
+  },
+  "System Context View": {
+    "prefix": "systemContext",
+    "body": [
+      "systemContext ${1:systemIdentifier} \"${2:SystemContext}\" \"${3:Description}\" {",
+      "\tinclude *",
+      "\tautoLayout",
+      "}"
+    ],
+    "description": "Insert a system context view block"
+  },
+  "Container View": {
+    "prefix": "containerView",
+    "body": [
+      "container ${1:systemIdentifier} \"${2:Containers}\" \"${3:Description}\" {",
+      "\tinclude *",
+      "\tautoLayout",
+      "}"
+    ],
+    "description": "Insert a container view block"
+  },
+  "Styles": {
+    "prefix": "styles",
+    "body": [
+      "styles {",
+      "\telement \"Person\" {",
+      "\t\tshape Person",
+      "\t\tbackground \"#08427b\"",
+      "\t\tcolor \"#ffffff\"",
+      "\t}",
+      "\telement \"Software System\" {",
+      "\t\tbackground \"#1168bd\"",
+      "\t\tcolor \"#ffffff\"",
+      "\t}",
+      "\telement \"Container\" {",
+      "\t\tbackground \"#438dd5\"",
+      "\t\tcolor \"#ffffff\"",
+      "\t}",
+      "\telement \"Component\" {",
+      "\t\tbackground \"#85bbf0\"",
+      "\t\tcolor \"#000000\"",
+      "\t}",
+      "}"
+    ],
+    "description": "Insert a styles block with common C4 defaults"
+  }
+}

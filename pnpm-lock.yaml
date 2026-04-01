@@ -229,7 +229,17 @@ importers:
         version: 5.9.3
 
   packages/vscode:
+    dependencies:
+      '@d3c4/core':
+        specifier: workspace:*
+        version: link:../core
+      '@d3c4/dsl':
+        specifier: workspace:*
+        version: link:../dsl
     devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.37
       '@types/vscode':
         specifier: ^1.85.0
         version: 1.110.0

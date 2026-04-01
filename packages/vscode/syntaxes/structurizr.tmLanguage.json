@@ -1,0 +1,85 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Structurizr DSL",
+  "scopeName": "source.structurizr",
+  "fileTypes": ["dsl"],
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#hashColors" },
+    { "include": "#controlKeywords" },
+    { "include": "#elementKeywords" },
+    { "include": "#styleProperties" },
+    { "include": "#operators" },
+    { "include": "#punctuation" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.structurizr",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.structurizr",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.comment.begin.structurizr" }
+          },
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.comment.end.structurizr" }
+          }
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.structurizr",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        { "name": "constant.character.escape.structurizr", "match": "\\\\." }
+      ]
+    },
+    "hashColors": {
+      "name": "constant.other.color.structurizr",
+      "match": "#[0-9a-fA-F]+"
+    },
+    "controlKeywords": {
+      "name": "keyword.control.structurizr",
+      "match": "\\b(workspace|model|views)\\b"
+    },
+    "elementKeywords": {
+      "name": "keyword.other.structurizr",
+      "match": "\\b(person|softwareSystem|container|component|systemLandscape|systemContext|styles|element|relationship|include|exclude|autoLayout|title|description|animation)\\b"
+    },
+    "styleProperties": {
+      "name": "support.type.property-name.structurizr",
+      "match": "\\b(background|color|colour|stroke|shape|fontSize|border|opacity|thickness|dashed|routing)\\b"
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.arrow.structurizr",
+          "match": "->"
+        },
+        {
+          "name": "keyword.operator.assignment.structurizr",
+          "match": "(?<![\\-!<>])=(?!=)"
+        }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.section.block.begin.structurizr",
+          "match": "\\{"
+        },
+        {
+          "name": "punctuation.section.block.end.structurizr",
+          "match": "\\}"
+        }
+      ]
+    }
+  }
+}
