@@ -1,0 +1,60 @@
+{
+  "name": "d3c4",
+  "displayName": "d3c4",
+  "description": "Structurizr DSL preview and tooling for VS Code",
+  "version": "0.0.1",
+  "publisher": "d3c4",
+  "private": true,
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Visualization"
+  ],
+  "keywords": [
+    "structurizr",
+    "c4",
+    "architecture",
+    "dsl"
+  ],
+  "activationEvents": [
+    "onLanguage:structurizr"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "structurizr",
+        "aliases": [
+          "Structurizr DSL",
+          "structurizr"
+        ],
+        "extensions": [
+          ".dsl"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "d3c4.helloWorld",
+        "title": "d3c4: Hello World"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.5.0",
+    "vite": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/imerljak/d3c4",
+    "directory": "packages/vscode"
+  }
+}
