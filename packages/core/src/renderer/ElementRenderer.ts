@@ -1,207 +1,133 @@
-import * as d3 from 'd3';
+import { dia } from 'jointjs';
 import type { LayoutNode } from '../layout/types.js';
 import type { ResolvedElement } from '../parser/types.js';
-import { getDrawFn } from './ShapeRegistry.js';
+import { createShapeCell, createBoundaryCell, type ShapeContent } from './ShapeRegistry.js';
 
 export interface ElementRendererOptions {
   onElementClick?: (element: ResolvedElement) => void;
 }
 
+/**
+ * Renders C4 elements as JointJS `dia.Element` cells.
+ *
+ * Each call to `render()` synchronises the graph to the new layout:
+ *   - Existing cells whose IDs are no longer present are removed.
+ *   - New cells are created with `node.id` as the stable cell ID.
+ *   - Cells that already exist are repositioned in place.
+ *
+ * This replaces the D3 general-update-pattern from the previous implementation.
+ */
 export class ElementRenderer {
-  private canvas: d3.Selection<SVGGElement, unknown, null, undefined>;
-  private options: ElementRendererOptions;
+  private readonly graph: dia.Graph;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private readonly paper: any; // dia.Paper
+  private readonly options: ElementRendererOptions;
+
+  /** IDs of cells currently owned by this renderer (elements + boundaries). */
+  private ownedIds = new Set<string>();
+  /** Maps cell ID → ResolvedElement for click callback lookup. */
+  private elementById = new Map<string, ResolvedElement>();
 
   constructor(
-    canvas: d3.Selection<SVGGElement, unknown, null, undefined>,
+    graph: dia.Graph,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    paper: any,
     options: ElementRendererOptions = {},
   ) {
-    this.canvas = canvas;
+    this.graph = graph;
+    this.paper = paper;
     this.options = options;
-
-    // Ensure layer groups exist in the right paint order
-    if (canvas.select('.d3c4-boundaries').empty()) {
-      canvas.append('g').attr('class', 'd3c4-boundaries');
-    }
-    if (canvas.select('.d3c4-relationships').empty()) {
-      canvas.append('g').attr('class', 'd3c4-relationships');
-    }
-    if (canvas.select('.d3c4-elements').empty()) {
-      canvas.append('g').attr('class', 'd3c4-elements');
-    }
   }
 
   render(nodes: LayoutNode[], boundaries: Array<{ element: ResolvedElement }>): void {
     this.renderBoundaries(boundaries, nodes);
     this.renderNodes(nodes);
+    this.attachClickHandler();
   }
+
+  // ── Private helpers ───────────────────────────────────────────────────────
 
   private renderBoundaries(
     boundaries: Array<{ element: ResolvedElement }>,
     nodes: LayoutNode[],
   ): void {
-    const layer = this.canvas.select<SVGGElement>('.d3c4-boundaries');
-    layer.selectAll('.d3c4-boundary').remove();
-
-    if (boundaries.length === 0 || nodes.length === 0) return;
+    // Remove boundaries not in this render
+    const nextBoundaryIds = new Set(boundaries.map((b) => `boundary-${b.element.name}`));
+    for (const id of [...this.ownedIds]) {
+      if (id.startsWith('boundary-') && !nextBoundaryIds.has(id)) {
+        this.graph.getCell(id)?.remove();
+        this.ownedIds.delete(id);
+      }
+    }
 
     for (const { element } of boundaries) {
-      // Nodes "inside" this boundary: Container children of a SoftwareSystem boundary,
-      // or Component children of a Container boundary.
-      const innerType = element.type === 'SoftwareSystem' ? 'Container' : 'Component';
-      const innerNodes = nodes.filter((n) => n.element.type === innerType);
-      if (innerNodes.length === 0) continue;
-
-      const H_PAD = 20;
-      const TOP_PAD = 20;
-      const BOTTOM_PAD = 52; // extra room for the label at the bottom
-
-      const minX = Math.min(...innerNodes.map((n) => n.x - n.width / 2)) - H_PAD;
-      const minY = Math.min(...innerNodes.map((n) => n.y - n.height / 2)) - TOP_PAD;
-      const maxX = Math.max(...innerNodes.map((n) => n.x + n.width / 2)) + H_PAD;
-      const maxY = Math.max(...innerNodes.map((n) => n.y + n.height / 2)) + BOTTOM_PAD;
-
-      const g = layer.append('g').attr('class', 'd3c4-boundary');
-
-      g.append('rect')
-        .attr('x', minX)
-        .attr('y', minY)
-        .attr('width', maxX - minX)
-        .attr('height', maxY - minY)
-        .attr('fill', element.style.background)
-        .attr('fill-opacity', 0.05)
-        .attr('stroke', element.style.background)
-        .attr('stroke-width', 2)
-        .attr('stroke-dasharray', '10,5');
-
-      // Label at bottom-left, inside the boundary rect
-      const labelX = minX + 10;
-      const badgeFontSize = 11;
-      const nameFontSize = 13;
-      const badgeY = maxY - 8;
-      const nameY = badgeY - badgeFontSize - 2;
-
-      g.append('text')
-        .attr('x', labelX)
-        .attr('y', nameY)
-        .attr('fill', element.style.background)
-        .attr('font-size', nameFontSize)
-        .attr('font-weight', 'bold')
-        .attr('font-family', 'sans-serif')
-        .text(element.name);
-
-      g.append('text')
-        .attr('x', labelX)
-        .attr('y', badgeY)
-        .attr('fill', element.style.background)
-        .attr('font-size', badgeFontSize)
-        .attr('font-family', 'sans-serif')
-        .attr('font-style', 'italic')
-        .text(`[${element.type === 'SoftwareSystem' ? 'Software System' : element.type}]`);
+      const id = `boundary-${element.name}`;
+      const existing = this.graph.getCell(id);
+      if (existing) {
+        // Recompute and update the boundary rect
+        existing.remove();
+        this.ownedIds.delete(id);
+      }
+      const cell = createBoundaryCell(element, nodes);
+      if (cell) {
+        this.graph.addCell(cell);
+        this.ownedIds.add(id);
+      }
     }
   }
 
   private renderNodes(nodes: LayoutNode[]): void {
-    const layer = this.canvas.select<SVGGElement>('.d3c4-elements');
+    const nextIds = new Set(nodes.map((n) => n.id));
 
-    // D3 general update pattern keyed by element ID
-    const groups = layer
-      .selectAll<SVGGElement, LayoutNode>('.d3c4-element')
-      .data(nodes, (d) => d.id);
-
-    groups.exit().remove();
-
-    const entering = groups
-      .enter()
-      .append('g')
-      .attr('class', 'd3c4-element')
-      .attr('data-id', (d) => d.id)
-      .attr('data-type', (d) => d.element.type)
-      .style('cursor', 'pointer');
-
-    if (this.options.onElementClick) {
-      entering.on('click', (event, d) => {
-        event.stopPropagation();
-        this.options.onElementClick!(d.element);
-      });
+    // Remove cells for elements no longer in the view
+    for (const id of [...this.ownedIds]) {
+      if (!id.startsWith('boundary-') && !nextIds.has(id)) {
+        this.graph.getCell(id)?.remove();
+        this.ownedIds.delete(id);
+      }
     }
 
-    const merged = entering.merge(groups);
+    for (const node of nodes) {
+      const content = nodeToContent(node);
+      const existing = this.graph.getCell(node.id) as dia.Element | undefined;
 
-    // Position (transition on re-render)
-    merged
-      .transition()
-      .duration(300)
-      .attr('transform', (d) => `translate(${d.x - d.width / 2}, ${d.y - d.height / 2})`);
-
-    // Draw shape — clear and redraw on each render (style may have changed)
-    merged.each(function (d) {
-      const g = d3.select<SVGGElement, LayoutNode>(this);
-      // Remove old shape children
-      g.selectAll('.d3c4-shape, .d3c4-shape-head, .d3c4-shape-body, .d3c4-label-group').remove();
-
-      const { style } = d.element;
-      const drawFn = getDrawFn(style.shape);
-      drawFn(g as any, style);
-
-      // Label group
-      const labelG = g.append('g').attr('class', 'd3c4-label-group');
-
-      const isPerson = style.shape === 'Person';
-      // For Person: body rect starts at y=46; add 8px top padding → first text at y=54.
-      const textStartY = isPerson ? 54 : 0;
-
-      // Type badge (e.g. [Person], [Container: Java])
-      const badge = buildTypeBadge(d.element);
-      if (badge) {
-        labelG
-          .append('text')
-          .attr('class', 'd3c4-element-badge')
-          .attr('x', d.width / 2)
-          .attr('y', textStartY + style.fontSize * 0.8)
-          .attr('text-anchor', 'middle')
-          .attr('fill', style.color)
-          .attr('font-size', Math.max(style.fontSize - 3, 10))
-          .attr('font-family', 'sans-serif')
-          .text(badge);
+      if (existing) {
+        // Reposition without full recreation (preserves any embedded state)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (existing as any).set({
+          position: { x: node.x - node.width  / 2, y: node.y - node.height / 2 },
+          size:     { width: node.width, height: node.height },
+        });
+      } else {
+        const cell = createShapeCell(node, content);
+        this.graph.addCell(cell);
+        this.ownedIds.add(node.id);
       }
+      this.elementById.set(node.id, node.element);
+    }
+  }
 
-      // Name (main label)
-      const nameY = badge
-        ? textStartY + style.fontSize * 0.8 + style.fontSize + 4
-        : textStartY + (isPerson ? 4 : d.height / 2 - (d.element.description ? style.fontSize : style.fontSize / 2));
-
-      const nameExtraHeight = wrapText(
-        labelG,
-        d.element.name,
-        d.width - 16,
-        d.width / 2,
-        nameY,
-        style.color,
-        style.fontSize,
-        true,
-      );
-
-      // Description (smaller, optional)
-      if (d.element.description) {
-        const descFontSize = Math.max(style.fontSize - 3, 10);
-        const descY = nameY + nameExtraHeight + descFontSize + 6;
-        wrapText(
-          labelG,
-          d.element.description,
-          d.width - 16,
-          d.width / 2,
-          descY,
-          style.color,
-          descFontSize,
-          false,
-        );
-      }
+  /**
+   * Wire the element:click Paper event to the onElementClick callback.
+   * Called on every render to refresh the handler's node lookup.
+   */
+  private attachClickHandler(): void {
+    if (!this.options.onElementClick) return;
+    this.paper.off('element:click.d3c4-element');
+    this.paper.on('element:click.d3c4-element', (view: unknown) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const cellId = String((view as any).model?.id ?? '');
+      if (!this.ownedIds.has(cellId) || cellId.startsWith('boundary-')) return;
+      const el = this.elementById.get(cellId);
+      if (el) this.options.onElementClick!(el);
     });
   }
 }
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
 function buildTypeBadge(element: ResolvedElement): string | null {
-  if (element.type === 'Person') return '[Person]';
+  if (element.type === 'Person')         return '[Person]';
   if (element.type === 'SoftwareSystem') return '[Software System]';
   if (element.type === 'Container') {
     return element.technology ? `[Container: ${element.technology}]` : '[Container]';
@@ -212,50 +138,11 @@ function buildTypeBadge(element: ResolvedElement): string | null {
   return null;
 }
 
-function wrapText(
-  parent: d3.Selection<SVGGElement, LayoutNode, SVGGElement | null, undefined>,
-  text: string,
-  maxWidth: number,
-  x: number,
-  y: number,
-  color: string,
-  fontSize: number,
-  bold: boolean,
-): number {
-  const textEl = parent
-    .append('text')
-    .attr('x', x)
-    .attr('y', y)
-    .attr('text-anchor', 'middle')
-    .attr('fill', color)
-    .attr('font-size', fontSize)
-    .attr('font-family', 'sans-serif')
-    .attr('font-weight', bold ? 'bold' : 'normal');
-
-  // Simple word wrap: approximate chars per line
-  const charsPerLine = Math.floor(maxWidth / (fontSize * 0.55));
-  const words = text.split(' ');
-  const lines: string[] = [];
-  let currentLine = '';
-
-  for (const word of words) {
-    const test = currentLine ? `${currentLine} ${word}` : word;
-    if (test.length > charsPerLine && currentLine) {
-      lines.push(currentLine);
-      currentLine = word;
-    } else {
-      currentLine = test;
-    }
-  }
-  if (currentLine) lines.push(currentLine);
-
-  for (let i = 0; i < lines.length; i++) {
-    textEl
-      .append('tspan')
-      .attr('x', x)
-      .attr('dy', i === 0 ? 0 : fontSize * 1.2)
-      .text(lines[i]!);
-  }
-
-  return (lines.length - 1) * fontSize * 1.2;
+function nodeToContent(node: LayoutNode): ShapeContent {
+  return {
+    badge:       buildTypeBadge(node.element),
+    name:        node.element.name,
+    description: node.element.description,
+    style:       node.element.style,
+  };
 }

@@ -5,7 +5,6 @@ import { LayoutEngine } from '../layout/LayoutEngine.js';
 import { SvgCanvas } from './SvgCanvas.js';
 import { ElementRenderer } from './ElementRenderer.js';
 import { RelationshipRenderer } from './RelationshipRenderer.js';
-// import { DragHandler } from './DragHandler.js';
 import { NavigationHandler } from './NavigationHandler.js';
 import type { ResolvedElement, ResolvedRelationship, ResolvedWorkspace } from '../parser/types.js';
 
@@ -53,7 +52,6 @@ export class Renderer {
   private svgCanvas: SvgCanvas | null = null;
   private elementRenderer: ElementRenderer | null = null;
   private relRenderer: RelationshipRenderer | null = null;
-  // private dragHandler: DragHandler | null = null;
   private navigationHandler: NavigationHandler | null = null;
 
   constructor(
@@ -101,7 +99,6 @@ export class Renderer {
 
       this.elementRenderer!.render(layoutGraph.nodes, boundaryElements);
       this.relRenderer!.render(layoutGraph.edges);
-      // this.dragHandler!.attach(layoutGraph.nodes);
       this.navigationHandler!.attach(layoutGraph.nodes, this.resolved!.views);
 
       if (this.options.fitOnRender !== false) {
@@ -146,7 +143,6 @@ export class Renderer {
     this.svgCanvas = null;
     this.elementRenderer = null;
     this.relRenderer = null;
-    // this.dragHandler = null;
     this.navigationHandler = null;
     this.resolved = null;
   }
@@ -163,18 +159,20 @@ export class Renderer {
       height: this.options.height,
     });
 
-    this.elementRenderer = new ElementRenderer(this.svgCanvas.canvas, {
-      onElementClick: this.options.onElementClick,
-    });
+    this.elementRenderer = new ElementRenderer(
+      this.svgCanvas.graph,
+      this.svgCanvas.paper,
+      { onElementClick: this.options.onElementClick },
+    );
 
-    this.relRenderer = new RelationshipRenderer(this.svgCanvas.canvas, this.svgCanvas, {
-      onRelationshipClick: this.options.onRelationshipClick,
-    });
-
-    // this.dragHandler = new DragHandler(this.svgCanvas.canvas);
+    this.relRenderer = new RelationshipRenderer(
+      this.svgCanvas.graph,
+      this.svgCanvas.paper,
+      { onRelationshipClick: this.options.onRelationshipClick },
+    );
 
     this.navigationHandler = new NavigationHandler(
-      this.svgCanvas.canvas,
+      this.svgCanvas.paper,
       (viewKey) => {
         this.render(viewKey);
         this.options.onNavigate?.(viewKey);

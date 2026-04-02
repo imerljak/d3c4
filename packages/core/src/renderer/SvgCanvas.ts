@@ -26,8 +26,12 @@ export class SvgCanvas {
   readonly defs: d3.Selection<SVGDefsElement, unknown, null, undefined>;
   readonly canvas: d3.Selection<SVGGElement, unknown, null, undefined>;
 
+  /** JointJS graph — add dia.Element/dia.Link cells here to render them. */
+  readonly graph: dia.Graph;
+  /** JointJS paper — use for Paper event subscriptions and scaling. */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private readonly paper: any; // dia.Paper — typed as any to access Backbone internals
+  readonly paper: any; // dia.Paper — typed as any to access Backbone internals
+
   private readonly container: HTMLElement;
   private readonly options: SvgCanvasOptions;
 
@@ -47,15 +51,14 @@ export class SvgCanvas {
     container.querySelectorAll('svg.d3c4-svg').forEach((el) => el.remove());
 
     // dia.Paper creates the SVG and appends it to the container
-    const graph = new dia.Graph();
+    this.graph = new dia.Graph();
     this.paper = new dia.Paper({
       el: container,
-      model: graph,
+      model: this.graph,
       width: w,
       height: h,
       background: { color: '#ffffff' },
-      // No interactive elements — SvgCanvas renders raw D3 SVG, not JointJS cells
-      interactive: false,
+      interactive: { elementMove: true, addLinkFromMagnet: false },
       gridSize: 1,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);

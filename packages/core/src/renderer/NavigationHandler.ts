@@ -1,50 +1,47 @@
-import * as d3 from 'd3';
 import type { DiagramView, ContainerView, ComponentView } from '@d3c4/types';
 import type { LayoutNode } from '../layout/types.js';
 import type { ResolvedElement } from '../parser/types.js';
 
 /**
- * Attaches drill-down navigation to rendered elements.
+ * Attaches drill-down navigation to rendered elements via JointJS Paper events.
  *
  * Double-clicking a SoftwareSystem navigates to its ContainerView;
  * double-clicking a Container navigates to its ComponentView.
- * Elements that have no related view are unaffected.
  *
  * Call `attach(nodes, views)` after every render.
  */
 export class NavigationHandler {
-  private canvas: d3.Selection<SVGGElement, unknown, null, undefined>;
-  private navigate: (viewKey: string) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private readonly paper: any; // dia.Paper
+  private readonly navigate: (viewKey: string) => void;
 
   constructor(
-    canvas: d3.Selection<SVGGElement, unknown, null, undefined>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    paper: any,
     navigate: (viewKey: string) => void,
   ) {
-    this.canvas = canvas;
+    this.paper = paper;
     this.navigate = navigate;
   }
 
   attach(nodes: LayoutNode[], views: DiagramView[]): void {
-    const navigate = this.navigate;
+    // Build drilldown map: element ID → target view key
+    const drilldown = new Map<string, string>();
+    for (const node of nodes) {
+      const key = findDrillDownView(node.element, views);
+      if (key) drilldown.set(node.id, key);
+    }
 
-    this.canvas
-      .selectAll<SVGGElement, LayoutNode>('.d3c4-element')
-      .each(function (d) {
-        const targetKey = findDrillDownView(d.element, views);
-        const sel = d3.select<SVGGElement, LayoutNode>(this);
+    // Re-register on every render to pick up the latest drilldown map
+    this.paper.off('element:pointerdblclick.navigate');
+    if (drilldown.size === 0) return;
 
-        // Remove any previously registered handler to avoid duplicates on re-render.
-        sel.on('dblclick.navigate', null);
-
-        if (!targetKey) return;
-
-        sel
-          .style('cursor', 'zoom-in')
-          .on('dblclick.navigate', (event) => {
-            event.stopPropagation();
-            navigate(targetKey);
-          });
-      });
+    this.paper.on('element:pointerdblclick.navigate', (view: unknown) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const cellId = String((view as any).model?.id ?? '');
+      const key = drilldown.get(cellId);
+      if (key) this.navigate(key);
+    });
   }
 }
 
