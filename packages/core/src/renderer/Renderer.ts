@@ -106,10 +106,7 @@ export class Renderer {
         setTimeout(() => this.svgCanvas?.fitToView(), 50);
       }
 
-      const svgEl = this.svgCanvas.svg.node();
-      if (svgEl) {
-        this.options.onRenderComplete?.({ svgElement: svgEl });
-      }
+      this.options.onRenderComplete?.({ svgElement: this.svgCanvas.svg });
     } catch (err) {
       console.error('[d3c4] Render error:', err);
     }
@@ -132,9 +129,8 @@ export class Renderer {
 
   /** Get the underlying SVG element (for export to PNG/SVG string). */
   getSvgElement(): SVGElement {
-    const el = this.svgCanvas?.svg.node();
-    if (!el) throw new Error('[d3c4] Renderer not initialized');
-    return el;
+    if (!this.svgCanvas) throw new Error('[d3c4] Renderer not initialized');
+    return this.svgCanvas.svg;
   }
 
   /** Clean up and remove the SVG from the DOM. */
